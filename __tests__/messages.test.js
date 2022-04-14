@@ -26,4 +26,24 @@ describe('CLIC routes', () => {
       createdAt: expect.any(Date)
   });
   })
+
+  it('should get all the past messages', async () => {
+    const res = await Message.getAll()
+
+    
+
+    expect(res).toEqual([{
+      message: 'HELLO WORLD!',
+      userId: '1',
+      id: expect.any(String),
+      createdAt: expect.any(Date)
+    }, {
+      
+      message: 'Goodbye, see you next time!',
+      userId: '2',
+      id: expect.any(String),
+      createdAt: expect.any(Date)
+      
+    }]);
+  })
 });
