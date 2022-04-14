@@ -30,6 +30,9 @@ io.on('connection', (socket) => {
 
   //if user emmited 'new user' event, this callback will be called
   socket.on('new user', (name) => {
+    // THIS IS WHERE WE INSERT IN OUR USER MODEL?
+    // THIS WHERE WE FETCH AND BROADCAST/EMIT PAST MESSAGES?
+
     //store users name
     users[socket.id] = name;
     // now we want to emit an event to all users except that user, that the new user has joined the chat
@@ -38,6 +41,9 @@ io.on('connection', (socket) => {
 
   // Listen for a message event
   socket.on('message', (text) => {
+    
+    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
+
     // emit an event to all users execept that user
     socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
   });
