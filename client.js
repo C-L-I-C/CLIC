@@ -27,7 +27,7 @@ rl.question('Enter your username: ', (text) => {
 
 //Listen for event message from the server
 socket.on('message', (text) => {
-  // Erase last line
+  // Erase last line > prompt
   // erases the current line in the console and rewrites something
   process.stdout.write('\r\x1b[K');
   // log out text of message
