@@ -25,4 +25,19 @@ describe('CLIC routes', () => {
           email: 'user3@test.com'
       });
   })
+
+  it('should get all users', async () => {
+      const res = await User.getAll()
+
+      expect(res).toEqual([{
+          id: expect.any(String),
+          username: 'user 1',
+          email: 'user1@test.com'
+      },
+    {
+        id: expect.any(String),
+        username: 'user 2',
+        email: 'user@test.com'
+    }]);
+  });
 });
