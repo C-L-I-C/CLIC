@@ -13,17 +13,17 @@ describe('CLIC routes', () => {
     pool.end();
   });
 
-  it('should be able to insert and instance of message into messages', async () => {
-    const response = await Message.insert({
+  it('should be able to insert an instance of message into messages', async () => {
+    const res = await Message.insert({
       userId: '1',
       message: 'You rock!'
     });
 
-    expect(response.body).toEqual({
+    expect(res).toEqual({
       id: expect.any(String),
       userId: '1',
       message: 'You rock!',
-      createdAt: expect.any(String)
+      createdAt: expect.any(Date)
   });
   })
 });
