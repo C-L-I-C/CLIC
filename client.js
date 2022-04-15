@@ -8,7 +8,6 @@ const socket = io('http://localhost:3000');
 
 // import readline to read from console
 const readline = require('readline');
-const ASCII = require('./lib/models/ASCII');
 
 // create an interface to get input from the terminal console
 const rl = readline.createInterface({
@@ -69,23 +68,21 @@ rl.on('line', async (text) => {
   if (text === '/listcommands') {
     console.log('SLASH COMMANDS AVAILABLE:\n/listascii -> lists available ascii art names \n/printascii -> prompts for ascii art name and prints to terminal');
   }
+
   else if (text === '/listascii') {
     //we need to fetch all the rows from db and map through and console log names
     socket.emit('listascii');
   }
+
   else if (text === '/printascii') {
     console.log('Enter the name of the ASCII art you would like to print');
-    //prompts user to enter a new lne
-    rl.prompt();
-    //listens for the new line that should be our ASCII name
-    rl.on('line', (name) => {
+    // //prompts user to enter a new lne
+    rl.question('Enter the name of the ASCII art you would like to print', (name) => {
       //when entered emits as an printascii event and the name
       socket.emit('printascii', name);
     });
-    // socket.emit('printascii');
   }
 
-  //query/get from our ASCII table matching with "dwight", bringing back ASCII string
 
   // socket.emit('message', `null`);
   else {

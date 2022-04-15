@@ -49,11 +49,10 @@ io.on('connection', (socket) => {
   // Listen for a message event
   socket.on('message', async (text) => {
     // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
-    const res = await Message.insert({
+    await Message.insert({
       message: text,
       // userId: `${users[socket.id]}`,
     });
-    // console.log('messageres', res);
     // emit an event to all users execept that user
     socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
   });
@@ -75,8 +74,8 @@ io.on('connection', (socket) => {
   socket.on('printascii', async (name) => {
     const asciiObject = await ASCII.getByName(name);
     console.log('asciiString', asciiObject.string);
-    socket.emit('printascii', asciiObject.string);
-    socket.broadcast.emit('printascii', asciiObject.string);
+    io.emit('printascii', asciiObject.string);
+    // socket.broadcast.emit('printascii', asciiObject.string);
 
   });
 });
