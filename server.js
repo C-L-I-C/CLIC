@@ -20,7 +20,7 @@ process.on('exit', () => {
 //create socket.io server
 const io = require('socket.io')();
 // name a port for our server
-const SOCKET_PORT = process.env.SOCKET_PORT || 3001;
+const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 //user object to store names of user
 const users = {};

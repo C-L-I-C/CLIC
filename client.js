@@ -41,8 +41,24 @@ rl.prompt();
 
 // When user inputs text, fire readline 'line' event which emits the message with socket.io
 rl.on('line', (text) => {
-  // send the user message to the socket server
-  socket.emit('message', text.trim());
+
+  if (text === '/hello') {
+    //query/get from our ASCII table matching with "dwight", bringing back ASCII string
+
+    socket.emit('message', `\n/**      **          **                                        **      **
+    /**     /**         /**                                       /**     /**
+    /**     /**  *****  /**  ******    ***     **  ******  ****** /**     /**
+    /********** **///** /** **////**  //**  * /** **////**//**//* /**  ******
+    /**//////**/******* /**/**   /**   /** ***/**/**   /** /** /  /** **///**
+    /**     /**/**////  /**/**   /**   /****/****/**   /** /**    /**/**  /**
+    /**     /**//****** ***//******    ***/ ///**//****** /***    ***//******
+    //      //  ////// ///  //////    ///    ///  //////  ///    ///  ////// `);
+  }
+  else {
+    // send the user message to the socket server
+    socket.emit('message', text.trim());
+  }
+
   //console log out arrow without doing a new line
   process.stdout.write('> ');
   // then prompt user again
