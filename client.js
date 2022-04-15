@@ -1,4 +1,4 @@
-// socket.io client 
+// socket.io client
 
 // Import socket.io client module
 const io = require('socket.io-client');
@@ -48,4 +48,3 @@ rl.on('line', (text) => {
   // then prompt user again
   rl.prompt();
 });
-
