@@ -30,7 +30,7 @@ const users = {};
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
 
-  //if user emmited 'new user' event, this callback will be called
+  //if user emitted 'new user' event, this callback will be called
   socket.on('new user', async (name) => {
     // THIS IS WHERE WE INSERT IN OUR USER MODEL?
     // THIS WHERE WE FETCH AND BROADCAST/EMIT PAST MESSAGES?
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
       message: text,
       // userId: `${users[socket.id]}`,
     });
-    // emit an event to all users execept that user
+    // emit an event to all users except that user
     socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
   });
 
@@ -76,7 +76,6 @@ io.on('connection', (socket) => {
     console.log('asciiString', asciiObject.string);
     io.emit('printascii', asciiObject.string);
     // socket.broadcast.emit('printascii', asciiObject.string);
-
   });
 });
 

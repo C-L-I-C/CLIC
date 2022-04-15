@@ -9,6 +9,8 @@ const socket = io('http://localhost:3000');
 // import readline to read from console
 const readline = require('readline');
 
+inquirer.registerPrompt('selectLine', require('inquirer-select-line'));
+
 // create an interface to get input from the terminal console
 const rl = readline.createInterface({
   input: process.stdin,
@@ -64,25 +66,32 @@ rl.prompt();
 
 // When user inputs text, fire readline 'line' event which emits the message with socket.io
 rl.on('line', async (text) => {
-
   if (text === '/listcommands') {
-    console.log('SLASH COMMANDS AVAILABLE:\n/listascii -> lists available ascii art names \n/printascii -> prompts for ascii art name and prints to terminal');
-  }
-
-  else if (text === '/listascii') {
+    console.log(
+      'SLASH COMMANDS AVAILABLE:\n/listascii -> lists available ascii art names \n/printascii -> prompts for ascii art name and prints to terminal'
+    );
+  } else if (text === '/listascii') {
     //we need to fetch all the rows from db and map through and console log names
     socket.emit('listascii');
-  }
-
-  else if (text === '/printascii') {
+  } else if (text === '/printascii') {
     console.log('Enter the name of the ASCII art you would like to print');
     // //prompts user to enter a new lne
-    rl.question('Enter the name of the ASCII art you would like to print', (name) => {
-      //when entered emits as an printascii event and the name
-      socket.emit('printascii', name);
+    rl.question(
+      'Enter the name of the ASCII art you would like to print',
+      (name) => {
+        //when entered emits as an printascii event and the name
+        socket.emit('printascii', name);
+      }
+    );
+  } else if (text === '/deleteascii') {
+    //
+
+    inquirer.prompt({
+      type: 'selectLine',
+      message: 'Which ascii would you like to delete?',
+      name: 'delete',
     });
   }
-
 
   // socket.emit('message', `null`);
   else {
