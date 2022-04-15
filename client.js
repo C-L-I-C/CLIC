@@ -8,6 +8,7 @@ const socket = io('http://localhost:3000');
 
 // import readline to read from console
 const readline = require('readline');
+const ASCII = require('./lib/models/ASCII');
 
 // create an interface to get input from the terminal console
 const rl = readline.createInterface({
@@ -21,6 +22,7 @@ rl.question('Enter your username: ', (text) => {
   socket.emit('new user', text.trim());
   //let the user know they joined
   console.log('You joined the chat');
+  console.log('Type /listcommands for a list of commands');
   // write a > in terminal to prompt user to type a message
   process.stdout.write('> ');
 });
@@ -36,24 +38,38 @@ socket.on('message', (text) => {
   process.stdout.write('> ');
 });
 
+//Listen for ascii names being sent from server
+socket.on('listascii', (name) => {
+  // erases the current line in the console and rewrites something
+  process.stdout.write('\r\x1b[K');
+
+  console.log(name);
+
+  // console log out arrow without doing a new line
+  process.stdout.write('> ');
+});
+
 //Prompt user to enter a message
 rl.prompt();
 
 // When user inputs text, fire readline 'line' event which emits the message with socket.io
-rl.on('line', (text) => {
+rl.on('line', async (text) => {
 
-  if (text === '/hello') {
-    //query/get from our ASCII table matching with "dwight", bringing back ASCII string
-
-    socket.emit('message', `\n/**      **          **                                        **      **
-    /**     /**         /**                                       /**     /**
-    /**     /**  *****  /**  ******    ***     **  ******  ****** /**     /**
-    /********** **///** /** **////**  //**  * /** **////**//**//* /**  ******
-    /**//////**/******* /**/**   /**   /** ***/**/**   /** /** /  /** **///**
-    /**     /**/**////  /**/**   /**   /****/****/**   /** /**    /**/**  /**
-    /**     /**//****** ***//******    ***/ ///**//****** /***    ***//******
-    //      //  ////// ///  //////    ///    ///  //////  ///    ///  ////// `);
+  if (text === '/listcommands') {
+    console.log('SLASH COMMANDS AVAILABLE:\n/listascii\n/printascii');
   }
+  else if (text === '/listascii') {
+    //we need to fetch all the rows from db and map through and console log names
+    socket.emit('listascii');
+    // const asciiNames = await ASCII.getAll();
+    // asciiNames.map((object) => {
+    //   console.log(object.name);
+    // });
+  }
+
+  //query/get from our ASCII table matching with "dwight", bringing back ASCII string
+
+  // socket.emit('message', `null`);
   else {
     // send the user message to the socket server
     socket.emit('message', text.trim());

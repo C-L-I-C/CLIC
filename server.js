@@ -1,4 +1,5 @@
 const app = require('./lib/app');
+const ASCII = require('./lib/models/ASCII');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const pool = require('./lib/utils/pool');
@@ -52,9 +53,24 @@ io.on('connection', (socket) => {
       message: text,
       // userId: `${users[socket.id]}`,
     });
-    console.log('messageres', res);
+    // console.log('messageres', res);
     // emit an event to all users execept that user
     socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
+  });
+
+  //listen for /listascii command
+  socket.on('listascii', async () => {
+    //fetch out asciiNames from our DB
+    const asciiNames = await ASCII.getAll();
+    //map through the array of object and broadcast the names back?
+    asciiNames.map((object) => {
+      console.log('names?', object.name);
+      socket.emit('listascii', object.name);
+    });
+    // console.log(asciiNames[0].name);
+    // socket.emit('listascii', asciiNames[0].name);
+
+
   });
 });
 
