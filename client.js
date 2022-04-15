@@ -49,6 +49,17 @@ socket.on('listascii', (name) => {
   process.stdout.write('> ');
 });
 
+// Listen for printascii sent from server
+socket.on('printascii', (string) => {
+  // erases the current line in the console and rewrites something
+  process.stdout.write('\r\x1b[K');
+
+  console.log(string);
+
+  // console log out arrow without doing a new line
+  process.stdout.write('> ');
+});
+
 //Prompt user to enter a message
 rl.prompt();
 
@@ -56,15 +67,22 @@ rl.prompt();
 rl.on('line', async (text) => {
 
   if (text === '/listcommands') {
-    console.log('SLASH COMMANDS AVAILABLE:\n/listascii\n/printascii');
+    console.log('SLASH COMMANDS AVAILABLE:\n/listascii -> lists available ascii art names \n/printascii -> prompts for ascii art name and prints to terminal');
   }
   else if (text === '/listascii') {
     //we need to fetch all the rows from db and map through and console log names
     socket.emit('listascii');
-    // const asciiNames = await ASCII.getAll();
-    // asciiNames.map((object) => {
-    //   console.log(object.name);
-    // });
+  }
+  else if (text === '/printascii') {
+    console.log('Enter the name of the ASCII art you would like to print');
+    //prompts user to enter a new lne
+    rl.prompt();
+    //listens for the new line that should be our ASCII name
+    rl.on('line', (name) => {
+      //when entered emits as an printascii event and the name
+      socket.emit('printascii', name);
+    });
+    // socket.emit('printascii');
   }
 
   //query/get from our ASCII table matching with "dwight", bringing back ASCII string

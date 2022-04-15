@@ -69,7 +69,14 @@ io.on('connection', (socket) => {
     });
     // console.log(asciiNames[0].name);
     // socket.emit('listascii', asciiNames[0].name);
+  });
 
+  //listen for printascii event with name
+  socket.on('printascii', async (name) => {
+    const asciiObject = await ASCII.getByName(name);
+    console.log('asciiString', asciiObject.string);
+    socket.emit('printascii', asciiObject.string);
+    socket.broadcast.emit('printascii', asciiObject.string);
 
   });
 });
