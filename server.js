@@ -77,6 +77,25 @@ io.on('connection', (socket) => {
     io.emit('printascii', asciiObject.string);
     // socket.broadcast.emit('printascii', asciiObject.string);
   });
+
+  //listen for /getnamestodelete event
+  socket.on('getnamestodelete', async () => {
+    //fetch list of asciiNames from our db
+    const asciiNames = await ASCII.getAll();
+    let names = [];
+    asciiNames.map((object) => {
+      names.push(object.name);
+    });
+    console.log('names', names);
+    socket.emit('getnamestodelete', names);
+  });
+
+  // listen for /deleteascii event
+  socket.on('deleteascii', async (answer) => {
+    console.log('answer', answer);
+    const response = await ASCII.deleteByName(answer);
+    console.log('response', response);
+  });
 });
 
 //Starting up a server on PORT

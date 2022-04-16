@@ -9,6 +9,7 @@ const socket = io('http://localhost:3000');
 // import readline to read from console
 const readline = require('readline');
 
+const inquirer = require('inquirer');
 inquirer.registerPrompt('selectLine', require('inquirer-select-line'));
 
 // create an interface to get input from the terminal console
@@ -61,6 +62,26 @@ socket.on('printascii', (string) => {
   process.stdout.write('> ');
 });
 
+// Listen for deleteascii sent from server
+socket.on('getnamestodelete', (names) => {
+  // erases the current line in the console and rewrites something
+  process.stdout.write('\r\x1b[K');
+
+  inquirer
+    .prompt({
+      type: 'list',
+      message: 'Which ascii would you like to delete?',
+      name: 'delete',
+      choices: names,
+    })
+    .then((answer) => {
+      socket.emit('deleteascii', answer.delete);
+    });
+
+  // console log out arrow without doing a new line
+  process.stdout.write('> ');
+});
+
 //Prompt user to enter a message
 rl.prompt();
 
@@ -84,13 +105,8 @@ rl.on('line', async (text) => {
       }
     );
   } else if (text === '/deleteascii') {
-    //
-
-    inquirer.prompt({
-      type: 'selectLine',
-      message: 'Which ascii would you like to delete?',
-      name: 'delete',
-    });
+    socket.emit('getnamestodelete');
+    // socket.emit('deleteascii');
   }
 
   // socket.emit('message', `null`);
