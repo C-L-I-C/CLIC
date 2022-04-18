@@ -58,14 +58,22 @@ io.on('connection', (socket) => {
   });
 
   //listen for /listascii command
-  socket.on('listascii', async () => {
+  socket.on('getList', async (command) => {
+    const cmd = {
+      'ASCII': ASCII
+    }
     //fetch out asciiNames from our DB
-    const asciiNames = await ASCII.getAll();
+    console.log('Commands!!!', command);
+    const list = await cmd[command].getAll();
     //map through the array of object and broadcast the names back?
-    asciiNames.map((object) => {
+    let names = [];
+    list.map((object) => {
+      names.push(object.name)
       console.log('names?', object.name);
-      socket.emit('listascii', object.name);
     });
+    console.log('LISTSSSS', list);
+    socket.emit('selectList', [names, list]);
+
     // console.log(asciiNames[0].name);
     // socket.emit('listascii', asciiNames[0].name);
   });
