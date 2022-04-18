@@ -99,10 +99,10 @@ socket.on('getnamestodelete', (names) => {
 
 //Prompt user to enter a message
 rl.prompt();
+let operation = '';
 
 // When user inputs text, fire readline 'line' event which emits the message with socket.io
 rl.on('line', async (text) => {
-  let operation = '';
   if (text.charAt(0) === '/') {
     switch (text) {
       case '/ascii':
@@ -111,11 +111,15 @@ rl.on('line', async (text) => {
             type: 'list',
             message: 'Which operation would you like to choose?',
             name: 'operation',
-            choices: ['print', 'create', 'update', 'delete'],
+            choices: ['print', 'create'],
           })
           .then((answer) => {
-            operation = answer;
-            socket.emit('getList', 'ASCII')
+            operation = answer.operation;
+            if (answer.operation === 'print') {
+              socket.emit('getList', 'ASCII')
+            } else if (answer.operation === 'create') {
+              socket.emit('create', 'ASCII')
+            }
           })
     }
     // console.log(
