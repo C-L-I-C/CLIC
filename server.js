@@ -78,6 +78,17 @@ io.on('connection', (socket) => {
     // socket.emit('listascii', asciiNames[0].name);
   });
 
+  socket.on('create', async ([command, object]) => {
+    console.log('OBJECTTTT', object);
+    const cmd = {
+      'ASCII': ASCII
+    }
+    const create = await cmd[command].insert(object);
+    console.log('CREATE', create);
+    socket.emit('message', 'A new ASCII has been created!')
+
+  })
+
   //listen for printascii event with name
   socket.on('printascii', async (name) => {
     const asciiObject = await ASCII.getByName(name);

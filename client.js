@@ -118,7 +118,27 @@ rl.on('line', async (text) => {
             if (answer.operation === 'print') {
               socket.emit('getList', 'ASCII')
             } else if (answer.operation === 'create') {
-              socket.emit('create', 'ASCII')
+              const ascii = {};
+              inquirer
+                .prompt({
+                  type: 'input',
+                  message: 'Name your ASCII!',
+                  name: 'name'
+                })
+                .then((answer) => {
+                  ascii.name = answer.name
+                  inquirer
+                    .prompt({
+                      type: 'input',
+                      message: 'Create your ASCII!',
+                      name: 'string'
+                    })
+                    .then((answer) => {
+                      ascii.string = answer.string
+                      console.log('Did it work?', ascii);
+                      socket.emit('create', ['ASCII', ascii]);
+                    })
+                })
             }
           })
     }
