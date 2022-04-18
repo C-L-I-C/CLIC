@@ -85,8 +85,11 @@ io.on('connection', (socket) => {
     }
     const create = await cmd[command].insert(object);
     console.log('CREATE', create);
-    socket.emit('message', 'A new ASCII has been created!')
-
+    if (create) {
+      socket.emit('message', 'A new ASCII has been created!')
+    } else {
+      socket.emit('message', 'Invalid ASCII ):')
+    }
   })
 
   //listen for printascii event with name

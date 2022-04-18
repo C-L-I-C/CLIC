@@ -20,7 +20,7 @@ CREATE TABLE messages (
 CREATE TABLE ascii (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
-    string TEXT
+    string TEXT NOT NULL
 );
 
 INSERT INTO users (username, email)
