@@ -14,30 +14,32 @@ describe('CLIC routes', () => {
   });
 
   it('should insert a new user to the users table', async () => {
-      const res = await User.insert({
-          username: 'user 3',
-          email: 'user3@test.com'
-      });
+    const res = await User.insert({
+      username: 'user 3',
+      email: 'user3@test.com',
+    });
 
-      expect(res).toEqual({
-          id: expect.any(String),
-          username: 'user 3',
-          email: 'user3@test.com'
-      });
-  })
+    expect(res).toEqual({
+      id: expect.any(String),
+      username: 'user 3',
+      email: 'user3@test.com',
+    });
+  });
 
   it('should get all users', async () => {
-      const res = await User.getAll()
+    const res = await User.getAll();
 
-      expect(res).toEqual([{
-          id: expect.any(String),
-          username: 'user 1',
-          email: 'user1@test.com'
+    expect(res).toEqual([
+      {
+        id: expect.any(String),
+        username: 'user 1',
+        email: 'user1@test.com',
       },
-    {
+      {
         id: expect.any(String),
         username: 'user 2',
-        email: 'user@test.com'
-    }]);
+        email: 'user2@test.com',
+      },
+    ]);
   });
 });

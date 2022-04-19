@@ -13,21 +13,30 @@ describe('ASCII tests', () => {
     pool.end();
   });
 
-  it('should get a ASCII string by name', async () => {
-    const expected = expect.any(String);
+  it('should get a ASCII art by name', async () => {
+    const expected = {
+      id: expect.any(String),
+      name: 'smileycat',
+      string: '=(^_^)=',
+    };
 
-    const res = await ASCII.getByName('helloworld');
+    const res = await ASCII.getByName('smileycat');
 
-    expect(res.string).toEqual(expected);
+    expect(res).toEqual(expected);
   });
 
-
-  it('get list of all ascii names', async () => {
-    const expected = [{ name: expect.any(String) }, { name: expect.any(String) }];
+  it('get list of all asciis', async () => {
+    const expected = [
+      { id: expect.any(String), name: 'smileycat', string: '=(^_^)=' },
+      {
+        id: expect.any(String),
+        name: 'robot',
+        string: 'd[ o_0 ]b',
+      },
+    ];
 
     const res = await ASCII.getAll();
 
     expect(res).toEqual(expected);
   });
-
 });
