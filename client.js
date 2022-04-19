@@ -52,18 +52,31 @@ function handleAscii(prompt) {
   });
 }
 
+function promptOperation() {
+  return inquirer.prompt({
+    type: 'list',
+    message: 'Which operation would you like to choose?',
+    name: 'operation',
+    choices: ['print', 'create'],
+  });
+}
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
-    const prompt = inquirer.prompt({
-      type: 'list',
-      message: 'Which operation would you like to choose?',
-      name: 'operation',
-      choices: ['print', 'create'],
-    });
+    // const prompt = inquirer.prompt({
+    //   type: 'list',
+    //   message: 'Which operation would you like to choose?',
+    //   name: 'operation',
+    //   choices: ['print', 'create'],
+    // });
 
     switch (text) {
       case '/ascii':
+        const prompt = promptOperation();
         await handleAscii(prompt);
+        break;
+      case '/commands':
+        console.log('/ascii - Print or Create ASCII ART');
     }
   } else {
     // send the user message to the socket server
@@ -82,7 +95,8 @@ inquirer
     socket.emit('new user', username.trim());
     //let the user know they joined
     console.log('You joined the chat');
-    console.log('Type /listcommands for a list of commands'); // TODO: LIST AVAIL COMMANDS SELECT-LINE
+    console.log('Type /commands for a list of commands'); // TODO: LIST AVAIL COMMANDS SELECT-LINE
+    console.log('Here is a list of the Chat History: ');
     //prompt user to type a message
     messagePrompt();
   })
