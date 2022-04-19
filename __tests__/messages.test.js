@@ -24,13 +24,13 @@ describe('CLIC routes', () => {
       userId: '1',
       message: 'You rock!',
       createdAt: expect.any(Date)
+    });
   });
-  })
 
   it('should get all the past messages', async () => {
-    const res = await Message.getAll()
+    const res = await Message.getAll();
 
-    
+
 
     expect(res).toEqual([{
       message: 'HELLO WORLD!',
@@ -38,12 +38,52 @@ describe('CLIC routes', () => {
       id: expect.any(String),
       createdAt: expect.any(Date)
     }, {
-      
+
       message: 'Goodbye, see you next time!',
       userId: '2',
       id: expect.any(String),
       createdAt: expect.any(Date)
-      
+
     }]);
-  })
+  });
+
+
+  it('should get the last 10 chat history messages', async () => {
+
+    await Message.insert({
+      userId: '1',
+      message: 'You rock!'
+    });
+
+    const expected = [
+      {
+        message: 'HELLO WORLD!',
+        userId: '1',
+        id: expect.any(String),
+        createdAt: expect.any(Date)
+      },
+      {
+        message: 'Goodbye, see you next time!',
+        userId: '2',
+        id: expect.any(String),
+        createdAt: expect.any(Date)
+      },
+      {
+        message: 'You rock!',
+        userId: '1',
+        id: expect.any(String),
+        createdAt: expect.any(Date)
+      }
+    ];
+
+    const res = await Message.getHistory();
+
+    // console.log('res in test', res);
+
+    expect(res).toEqual(expected);
+
+
+
+
+  });
 });
