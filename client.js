@@ -59,7 +59,6 @@ function promptOperation() {
     choices: ['print', 'create'],
   });
 }
-
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     // const prompt = inquirer.prompt({

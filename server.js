@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
       message: text,
       username: `${users[socket.id]}`,
     });
-    console.log('*8888*****socketID', users[socket.id]);
+    console.log('****socketID****', users[socket.id]);
     // emit an event to all users except that user
     socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
   });
@@ -69,6 +69,7 @@ io.on('connection', (socket) => {
     // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
     await Message.insert({
       message: text,
+      username: `${users[socket.id]}`,
       // userId: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
