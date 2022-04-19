@@ -37,10 +37,9 @@ io.on('connection', (socket) => {
     //store users name
     users[socket.id] = name;
 
-    const res = await User.insert({
+    await User.insert({
       username: name,
     });
-    console.log('newuser!!', res);
 
     // now we want to emit an event to all users except that user, that the new user has joined the chat
     socket.broadcast.emit('message', `${name} joined the chat.`);
@@ -54,69 +53,42 @@ io.on('connection', (socket) => {
       // userId: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
+    console.log('what is this', text, text.length);
+    if (!text.includes('/')) {
+      socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
+    }
   });
 
-  //listen for /listascii command
+  //listen for /getList command
   socket.on('getList', async (command) => {
     const cmd = {
-      'ASCII': ASCII
-    }
+      ASCII,
+    };
     //fetch out asciiNames from our DB
-    console.log('Commands!!!', command);
+    // console.log('Commands!!!', command);
     const list = await cmd[command].getAll();
     //map through the array of object and broadcast the names back?
-    let names = [];
+    const names = [];
     list.map((object) => {
-      names.push(object.name)
-      console.log('names?', object.name);
+      names.push(object.name);
+      // console.log('names?', object.name);
     });
-    console.log('LISTSSSS', list);
+    // console.log('LISTSSSS', list);
     socket.emit('selectList', [names, list]);
-
-    // console.log(asciiNames[0].name);
-    // socket.emit('listascii', asciiNames[0].name);
   });
 
   socket.on('create', async ([command, object]) => {
-    console.log('OBJECTTTT', object);
+    // console.log('OBJECTTTT', object);
     const cmd = {
-      'ASCII': ASCII
-    }
+      ASCII,
+    };
     const create = await cmd[command].insert(object);
-    console.log('CREATE', create);
+    // console.log('CREATE', create);
     if (create) {
-      socket.emit('message', 'A new ASCII has been created!')
+      socket.emit('message', 'A new ASCII has been created!');
     } else {
-      socket.emit('message', 'Invalid ASCII ):')
+      socket.emit('message', 'Invalid ASCII ):');
     }
-  })
-
-  //listen for printascii event with name
-  socket.on('printascii', async (name) => {
-    const asciiObject = await ASCII.getByName(name);
-    console.log('asciiString', asciiObject.string);
-    io.emit('printascii', asciiObject.string);
-    // socket.broadcast.emit('printascii', asciiObject.string);
-  });
-
-  //listen for /getnamestodelete event
-  socket.on('getnamestodelete', async () => {
-    //fetch list of asciiNames from our db
-    const asciiNames = await ASCII.getAll();
-    let names = [];
-    asciiNames.map((object) => {
-      names.push(object.name);
-    });
-    console.log('names', names);
-    socket.emit('getnamestodelete', names);
-  });
-
-  // listen for /deleteascii event
-  socket.on('deleteascii', async (answer) => {
-    console.log('answer', answer);
-    const response = await ASCII.deleteByName(answer);
-    console.log('response', response);
   });
 });
 

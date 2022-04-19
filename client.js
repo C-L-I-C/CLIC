@@ -6,17 +6,11 @@ const socket = io('http://localhost:3000');
 // import readline to read from console
 const readline = require('readline');
 const inquirer = require('inquirer');
-const { listen } = require('./lib/app');
 inquirer.registerPrompt('selectLine', require('inquirer-select-line'));
 // create an interface to get input from the terminal console
 const rl = readline.createInterface({
   input: process.stdin,
 });
-
-
-
-
-
 
 // Get the users name
 console.log('Enter your username: ');
@@ -25,10 +19,26 @@ rl.question('Enter your username: ', (text) => {
   socket.emit('new user', text.trim());
   //let the user know they joined
   console.log('You joined the chat');
-  console.log('Type /listcommands for a list of commands');
+  console.log('Type /listcommands for a list of commands'); // TODO: LIST AVAIL COMMANDS SELECT-LINE
   // write a > in terminal to prompt user to type a message
   process.stdout.write('> ');
 });
+
+// TODO: FIX THIS?
+// inquirer
+//   .prompt({
+//     type: 'input',
+//     message: 'Enter your username: ',
+//     name: 'username',
+//   })
+//   .then((answer) => {
+//     socket.emit('new user', text.trim());
+//     //let the user know they joined
+//     console.log('You joined the chat');
+//     console.log('Type /listcommands for a list of commands'); // TODO: LIST AVAIL COMMANDS SELECT-LINE
+//     // write a > in terminal to prompt user to type a message
+//     process.stdout.write('> ');
+//   });
 
 //Listen for event message from the server
 socket.on('message', (text) => {
@@ -36,7 +46,7 @@ socket.on('message', (text) => {
   // erases the current line in the console and rewrites something
   process.stdout.write('\r\x1b[K');
   // log out text of message
-  console.log(text);
+  if (text.length) console.log(text);
   //console log out arrow without doing a new line
   process.stdout.write('> ');
 });
@@ -53,45 +63,14 @@ socket.on('selectList', ([names, list]) => {
       choices: names,
     })
     .then((answer) => {
-      // socket.emit('', ) 
+      // socket.emit('', )
       const choice = list.find((entry) => {
-        return (answer.select === entry.name)
-
-      })
+        return answer.select === entry.name;
+      });
       console.log(choice.string);
-    }).catch((error) => console.log(error));
-
-
-  // console log out arrow without doing a new line
-  process.stdout.write('> ');
-});
-
-// Listen for printascii sent from server
-socket.on('printascii', (string) => {
-  // erases the current line in the console and rewrites something
-  process.stdout.write('\r\x1b[K');
-
-  console.log(string);
-
-  // console log out arrow without doing a new line
-  process.stdout.write('> ');
-});
-
-// Listen for deleteascii sent from server
-socket.on('getnamestodelete', (names) => {
-  // erases the current line in the console and rewrites something
-  process.stdout.write('\r\x1b[K');
-
-  inquirer
-    .prompt({
-      type: 'list',
-      message: 'Which ascii would you like to delete?',
-      name: 'delete',
-      choices: names,
+      socket.emit('message', choice.string);
     })
-    .then((answer) => {
-      socket.emit('deleteascii', answer.delete);
-    });
+    .catch((error) => console.log(error));
 
   // console log out arrow without doing a new line
   process.stdout.write('> ');
@@ -99,7 +78,6 @@ socket.on('getnamestodelete', (names) => {
 
 //Prompt user to enter a message
 rl.prompt();
-let operation = '';
 
 // When user inputs text, fire readline 'line' event which emits the message with socket.io
 rl.on('line', async (text) => {
@@ -114,64 +92,38 @@ rl.on('line', async (text) => {
             choices: ['print', 'create'],
           })
           .then((answer) => {
-            operation = answer.operation;
             if (answer.operation === 'print') {
-              socket.emit('getList', 'ASCII')
+              socket.emit('getList', 'ASCII');
             } else if (answer.operation === 'create') {
               const ascii = {};
               inquirer
                 .prompt({
                   type: 'input',
                   message: 'Name your ASCII!',
-                  name: 'name'
+                  name: 'name',
                 })
                 .then((answer) => {
-                  ascii.name = answer.name
+                  ascii.name = answer.name;
                   inquirer
                     .prompt({
                       type: 'input',
                       message: 'Create your ASCII!',
-                      name: 'string'
+                      name: 'string',
                     })
                     .then((answer) => {
-                      ascii.string = answer.string
-                      console.log('Did it work?', ascii);
+                      ascii.string = answer.string;
+                      // console.log('Did it work?', ascii);
                       socket.emit('create', ['ASCII', ascii]);
-                    })
-                })
+                    });
+                });
             }
-          })
+          });
     }
-    // console.log(
-    //   'SLASH COMMANDS AVAILABLE:\n/listascii -> lists available ascii art names \n/printascii -> prompts for ascii art name and prints to terminal'
-    // );
-  }
-  // } else if (text === '/listascii') {
-  //   //we need to fetch all the rows from db and map through and console log names
-  //   socket.emit('listascii');
-  // } else if (text === '/printascii') {
-  //   console.log('Enter the name of the ASCII art you would like to print');
-  //   // //prompts user to enter a new lne
-  //   rl.question(
-  //     'Enter the name of the ASCII art you would like to print',
-  //     (name) => {
-  //       //when entered emits as an printascii event and the name
-  //       socket.emit('printascii', name);
-  //     }
-  //   );
-  // } else if (text === '/deleteascii') {
-  //   socket.emit('getnamestodelete');
-  //   // socket.emit('deleteascii');
-  // }
-
-  // socket.emit('message', `null`);
-  else {
+  } else {
     // send the user message to the socket server
     socket.emit('message', text.trim());
   }
-
-  //console log out arrow without doing a new line
   process.stdout.write('> ');
   // then prompt user again
-  rl.prompt();
+  // rl.prompt();
 });
