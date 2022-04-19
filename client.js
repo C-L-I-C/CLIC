@@ -16,7 +16,6 @@ async function messagePrompt() {
       name: 'message',
     })
     .then(async ({ message }) => {
-      socket.emit('server:message', message);
       await checkInput(message);
       messagePrompt();
     });
