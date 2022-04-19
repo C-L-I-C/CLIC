@@ -55,12 +55,11 @@ io.on('connection', (socket) => {
 
   // Listen for a message event
   socket.on('server:message', async (text) => {
-    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
+    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL
     await Message.insert({
       message: text,
       username: `${users[socket.id]}`,
     });
-    console.log('****socketID****', users[socket.id]);
     // emit an event to all users except that user
     socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
   });
