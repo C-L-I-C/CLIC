@@ -6,6 +6,7 @@ const pool = require('./lib/utils/pool');
 
 const API_URL = process.env.API_URL || 'http://localhost';
 const PORT = process.env.PORT || 7890;
+const chalk = require('chalk');
 
 app.listen(PORT, () => {
   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
@@ -41,15 +42,18 @@ io.on('connection', (socket) => {
     });
 
     const chatHistory = await Message.getHistory();
-    console.log('CHAT HISTORY', chatHistory);
+
     chatHistory.map((entry) => {
       const chat = `${entry.username} at ${entry.createdAt.toLocaleTimeString(
         'en-US'
       )} said ${entry.message}`;
-      socket.emit('client:message', chat);
+      socket.emit('client:message', chalk.italic.rgb(224, 212, 153)(chat));
     });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit('client:message', `${name} joined the chat.`);
+    socket.broadcast.emit(
+      'client:message',
+      chalk.cyan`${name} joined the chat.`
+    );
   });
 
   // Listen for a message event
@@ -70,7 +74,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    io.emit('client:message', `${users[socket.id]}: ${text}`);
+    io.emit('client:message', chalk.bgGreen`${users[socket.id]}: ${text}`);
   });
 
   //listen for /getList command
@@ -95,9 +99,12 @@ io.on('connection', (socket) => {
     const create = await cmd[command].insert(object);
 
     if (create) {
-      socket.emit('client:message', 'A new Emoticon has been created!');
+      socket.emit(
+        'client:message',
+        chalk.bold.red('A new Emoticon has been created!')
+      );
     } else {
-      socket.emit('client:message', 'Invalid Emoticon ):');
+      socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
     }
   });
 });

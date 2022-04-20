@@ -5,7 +5,9 @@ const io = require('socket.io-client');
 const socket = io('http://localhost:3000');
 // import readline to read from console
 const inquirer = require('inquirer');
-
+// import chalk to work with terminal styling
+// import chalk from 'chalk';
+const chalk = require('chalk');
 // create an interface to get input from the terminal console
 async function messagePrompt() {
   return inquirer
@@ -67,7 +69,9 @@ async function checkInput(text) {
         await handleEmoticon(prompt);
         break;
       case '/commands':
-        console.log('/emoticon - Print or Create Emoticon ART');
+        console.log(
+          chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
+        );
     }
   } else {
     // send the user message to the socket server
@@ -85,9 +89,13 @@ inquirer
   .then(({ username }) => {
     socket.emit('new user', username.trim());
     //let the user know they joined
-    console.log('You joined the chat');
-    console.log('Type /commands for a list of commands'); // TODO: LIST AVAIL COMMANDS SELECT-LINE
-    console.log('Here is a list of the Chat History: ');
+    console.log(chalk.bold.bgGreen('You joined the chat'));
+    console.log(
+      chalk.rgb(255, 136, 0).bold('Type /commands for a list of commands')
+    ); // TODO: LIST AVAIL COMMANDS SELECT-LINE
+    console.log(
+      chalk.bold.black.bgWhite('Here is a list of the Chat History: ')
+    );
     //prompt user to type a message
     messagePrompt();
   })
