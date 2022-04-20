@@ -42,7 +42,7 @@ describe('Admin routes', () => {
     });
   });
 
-  it('should be able to get a list of each Message from messages', async () => {
+  it('should be able to get a list of each Message from messages for authenticated admins', async () => {
     const agent = request.agent(app);
     const expected = [
       {
@@ -81,5 +81,28 @@ describe('Admin routes', () => {
     res = await agent.get('/api/v1/admins/messages');
 
     expect(res.body).toEqual(expected);
+  });
+
+  it('should allow authenticated admin to delete a message by id', async () => {
+    const agent = request.agent(app);
+    await AdminService.create({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    await agent.post('/api/v1/admins/sessions').send({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    const res = await agent.delete('/api/v1/admins/messages/1');
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      message: 'HELLO WORLD!',
+      userId: '1',
+      username: 'user 1',
+      createdAt: expect.any(String),
+    });
   });
 });
