@@ -41,4 +41,38 @@ describe('Admin routes', () => {
       admin,
     });
   });
+
+  it('should be able to get a list of each Message from messages', async () => {
+    const agent = request.agent(app);
+    const expected = [
+      {
+        message: 'HELLO WORLD!',
+        userId: '1',
+        id: expect.any(String),
+        createdAt: expect.any(String),
+        username: 'user 1',
+      },
+      {
+        message: 'Goodbye, see you next time!',
+        userId: '2',
+        id: expect.any(String),
+        createdAt: expect.any(String),
+        username: 'user 2',
+      },
+    ];
+
+    await AdminService.create({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    await agent.post('/api/v1/admins/sessions').send({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    const res = await agent.get('/api/v1/admins/messages');
+
+    expect(res.body).toEqual(expected);
+  });
 });
