@@ -2,7 +2,7 @@
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
-const socket = io('http://localhost:3000');
+const socket = io('https://cli-c.herokuapp.com/');
 // import readline to read from console
 const inquirer = require('inquirer');
 
