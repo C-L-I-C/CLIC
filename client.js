@@ -2,7 +2,8 @@
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
-const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
+// const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
+const socket = io('https://cli-c.herokuapp.com/');
 // import readline to read from console
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling

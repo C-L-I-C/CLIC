@@ -2,10 +2,7 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
-// const pool = require('./lib/utils/pool');
-// const express = require('express');
 const { createServer } = require('http');
-// const socketIO = require('socket.io');
 const { Server } = require('socket.io');
 
 // const API_URL = process.env.API_URL || 'http://localhost';
@@ -17,45 +14,24 @@ const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
 
-httpServer.listen(SOCKET_PORT, () => console.log(`Listening on ${SOCKET_PORT}`));
-
-
-
-//HTTP SERVER FOR SOCKET IO PER HEROKU DOCS
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-// const CLIENT = '/client.js';
-
-// const server = express()
-//   .use((req, res) => res.sendFile(CLIENT, { root: __dirname }))
-//   .listen(SOCKET_PORT, () => console.log(`Listening on ${SOCKET_PORT}`));
-
-// const io = socketIO(server);
-
+httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 
 // ORIGINAL EXPRESS SERVER METHOD
+// const API_URL = process.env.API_URL || 'http://localhost';
 // app.listen(PORT, () => {
 //   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
 // });
-
 // process.on('exit', () => {
 //   console.log('👋  Goodbye!');
 //   pool.end();
 // });
 
 
-
-
-
-
-
 // SOCKET.IO SERVER ACCORDING TO TUTORIAL
 //create socket.io server
-
 // const io = require('socket.io')();
-
 // // name a port for our server
-
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 
