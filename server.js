@@ -21,10 +21,10 @@ process.on('exit', () => {
 
 //HTTP SERVER FOR SOCKET IO PER HEROKU DOCS
 const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-const INDEX = '/index.html';
+const CLIENT = '/client.js';
 
 const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .use((req, res) => res.sendFile(CLIENT, { root: __dirname }))
   .listen(SOCKET_PORT, () => console.log(`Listening on ${SOCKET_PORT}`));
 
 const io = socketIO(server);
@@ -36,8 +36,11 @@ const io = socketIO(server);
 
 // SOCKET.IO SERVER
 //create socket.io server
+
 // const io = require('socket.io')();
+
 // // name a port for our server
+
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 //user object to store names of user
@@ -119,7 +122,7 @@ io.on('connection', (socket) => {
   });
 });
 
-//Starting up a server on PORT
+//Starting up a server on SOCKET_PORT
 // io.listen(SOCKET_PORT, () => {
 //   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
 // });
