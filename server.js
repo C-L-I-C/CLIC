@@ -120,6 +120,6 @@ io.on('connection', (socket) => {
 });
 
 //Starting up a server on PORT
-io.listen(SOCKET_PORT, () => {
-  console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-});
+// io.listen(SOCKET_PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+// });
