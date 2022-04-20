@@ -61,6 +61,13 @@ describe('Admin routes', () => {
       },
     ];
 
+    let res = await agent.get('/api/v1/admins/messages');
+
+    expect(res.body).toEqual({
+      message: 'You must be signed in!',
+      status: 401,
+    });
+
     await AdminService.create({
       email: 'user@admin.com',
       password: 'whatever',
@@ -71,7 +78,7 @@ describe('Admin routes', () => {
       password: 'whatever',
     });
 
-    const res = await agent.get('/api/v1/admins/messages');
+    res = await agent.get('/api/v1/admins/messages');
 
     expect(res.body).toEqual(expected);
   });
