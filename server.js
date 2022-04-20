@@ -1,4 +1,7 @@
 const app = require('./lib/app');
+const Emoticon = require('./lib/models/Emoticon');
+const Message = require('./lib/models/Message');
+const User = require('./lib/models/User');
 const pool = require('./lib/utils/pool');
 
 const API_URL = process.env.API_URL || 'http://localhost';
@@ -18,7 +21,7 @@ process.on('exit', () => {
 //create socket.io server
 const io = require('socket.io')();
 // name a port for our server
-const SOCKET_PORT = process.env.SOCKET_PORT || 3001;
+const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 //user object to store names of user
 const users = {};
@@ -26,24 +29,76 @@ const users = {};
 // Listen for connection event
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
-
-  //if user emmited 'new user' event, this callback will be called
-  socket.on('new user', (name) => {
+  //if user emitted 'new user' event, this callback will be called
+  socket.on('new user', async (name) => {
     // THIS IS WHERE WE INSERT IN OUR USER MODEL?
     // THIS WHERE WE FETCH AND BROADCAST/EMIT PAST MESSAGES?
-
     //store users name
     users[socket.id] = name;
+
+    await User.insert({
+      username: name,
+    });
+
+    const chatHistory = await Message.getHistory();
+    console.log('CHAT HISTORY', chatHistory);
+    chatHistory.map((entry) => {
+      const chat = `${entry.username} at ${entry.createdAt.toLocaleTimeString(
+        'en-US'
+      )} said ${entry.message}`;
+      socket.emit('client:message', chat);
+    });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit('message', `${name} joined the chat.`);
+    socket.broadcast.emit('client:message', `${name} joined the chat.`);
   });
 
   // Listen for a message event
-  socket.on('message', (text) => {
-    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
+  socket.on('server:message', async (text) => {
+    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL
+    await Message.insert({
+      message: text,
+      username: `${users[socket.id]}`,
+    });
+    // emit an event to all users except that user
+    socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
+  });
 
-    // emit an event to all users execept that user
-    socket.broadcast.emit('message', `${users[socket.id]}: ${text}`);
+  socket.on('emitEmoticon', async (text) => {
+    // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
+    await Message.insert({
+      message: text,
+      username: `${users[socket.id]}`,
+    });
+    // emit an event to all users except that user
+    io.emit('client:message', `${users[socket.id]}: ${text}`);
+  });
+
+  //listen for /getList command
+  socket.on('getList', async (command) => {
+    const cmd = {
+      Emoticon,
+    };
+    //fetch out emoticons from our DB
+    const list = await cmd[command].getAll();
+    //map through the array of object and broadcast the names back?
+    const names = [];
+    list.map((object) => {
+      names.push(object.name);
+    });
+    socket.emit('selectList', [names, list]);
+  });
+
+  socket.on('create', async ([command, object]) => {
+    const cmd = {
+      Emoticon,
+    };
+    const create = await cmd[command].insert(object);
+
+    if (create) {
+      socket.emit('client:message', 'A new Emoticon has been created!');
+    } else {
+      socket.emit('client:message', 'Invalid Emoticon ):');
+    }
   });
 });
 
