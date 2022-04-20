@@ -2,7 +2,7 @@
 -- The SQL in this file will be executed when you run `npm run setup-db`
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS ascii CASCADE;
+DROP TABLE IF EXISTS emoticon CASCADE;
 
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -18,7 +18,7 @@ CREATE TABLE messages (
     username TEXT NOT NULL
 );
 
-CREATE TABLE ascii (
+CREATE TABLE emoticon (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     string TEXT NOT NULL
@@ -34,7 +34,7 @@ VALUES
 ('HELLO WORLD!', '1', 'user 1'),
 ('Goodbye, see you next time!', '2', 'user 2');
 
-INSERT INTO ascii (name, string)
+INSERT INTO emoticon (name, string)
 VALUES 
 ('smileycat', '=(^_^)='),
 ('robot', 'd[ o_0 ]b');

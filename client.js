@@ -7,7 +7,6 @@ const socket = io('http://localhost:3000');
 const inquirer = require('inquirer');
 
 // create an interface to get input from the terminal console
-
 async function messagePrompt() {
   return inquirer
     .prompt({
@@ -21,30 +20,30 @@ async function messagePrompt() {
     });
 }
 
-function handleAscii(prompt) {
+function handleEmoticon(prompt) {
   return prompt.then((answer) => {
     if (answer.operation === 'print') {
-      socket.emit('getList', 'ASCII');
+      socket.emit('getList', 'Emoticon');
     } else if (answer.operation === 'create') {
-      const ascii = {};
+      const emoticon = {};
 
       return inquirer
         .prompt({
           type: 'input',
-          message: 'Name your ASCII!',
+          message: 'Name your Emoticon!',
           name: 'name',
         })
         .then((answer) => {
-          ascii.name = answer.name;
+          emoticon.name = answer.name;
           return inquirer
             .prompt({
               type: 'input',
-              message: 'Create your ASCII!',
+              message: 'Create your Emoticon!',
               name: 'string',
             })
             .then((answer) => {
-              ascii.string = answer.string;
-              socket.emit('create', ['ASCII', ascii]);
+              emoticon.string = answer.string;
+              socket.emit('create', ['Emoticon', emoticon]);
             });
         });
     }
@@ -59,22 +58,16 @@ function promptOperation() {
     choices: ['print', 'create'],
   });
 }
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
-    // const prompt = inquirer.prompt({
-    //   type: 'list',
-    //   message: 'Which operation would you like to choose?',
-    //   name: 'operation',
-    //   choices: ['print', 'create'],
-    // });
-
     switch (text) {
-      case '/ascii':
+      case '/emoticon':
         const prompt = promptOperation();
-        await handleAscii(prompt);
+        await handleEmoticon(prompt);
         break;
       case '/commands':
-        console.log('/ascii - Print or Create ASCII ART');
+        console.log('/emoticon - Print or Create Emoticon ART');
     }
   } else {
     // send the user message to the socket server
@@ -111,11 +104,11 @@ socket.on('client:message', (text) => {
   process.stdout.write('> ');
 });
 
-//Listen for ascii names being sent from server
+//Listen for emoticon names being sent from server
 socket.on('selectList', async ([names, list]) => {
   const prompt = inquirer.prompt({
     type: 'list',
-    message: 'Select ASCII',
+    message: 'Select Emoticon',
     name: 'select',
     choices: names,
   });
@@ -125,7 +118,7 @@ socket.on('selectList', async ([names, list]) => {
       const choice = list.find((entry) => {
         return answer.select === entry.name;
       });
-      socket.emit('emitAscii', choice.string);
+      socket.emit('emitEmoticon', choice.string);
     })
     .catch((error) => console.log(error));
 });

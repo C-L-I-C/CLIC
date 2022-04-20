@@ -1,7 +1,5 @@
 const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
-const request = require('supertest');
-const app = require('../lib/app');
 const Message = require('../lib/models/Message');
 
 describe('CLIC routes', () => {
@@ -82,8 +80,6 @@ describe('CLIC routes', () => {
     ];
 
     const res = await Message.getHistory();
-
-    // console.log('res in test', res);
 
     expect(res).toEqual(expected);
   });

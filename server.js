@@ -1,5 +1,5 @@
 const app = require('./lib/app');
-const ASCII = require('./lib/models/ASCII');
+const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const pool = require('./lib/utils/pool');
@@ -29,7 +29,6 @@ const users = {};
 // Listen for connection event
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
-
   //if user emitted 'new user' event, this callback will be called
   socket.on('new user', async (name) => {
     // THIS IS WHERE WE INSERT IN OUR USER MODEL?
@@ -64,12 +63,11 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
   });
 
-  socket.on('emitAscii', async (text) => {
+  socket.on('emitEmoticon', async (text) => {
     // THIS IS WHERE WE INSERT IN OUT MESSAGE MODEL?
     await Message.insert({
       message: text,
       username: `${users[socket.id]}`,
-      // userId: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
     io.emit('client:message', `${users[socket.id]}: ${text}`);
@@ -78,9 +76,9 @@ io.on('connection', (socket) => {
   //listen for /getList command
   socket.on('getList', async (command) => {
     const cmd = {
-      ASCII,
+      Emoticon,
     };
-    //fetch out asciiNames from our DB
+    //fetch out emoticons from our DB
     const list = await cmd[command].getAll();
     //map through the array of object and broadcast the names back?
     const names = [];
@@ -92,14 +90,14 @@ io.on('connection', (socket) => {
 
   socket.on('create', async ([command, object]) => {
     const cmd = {
-      ASCII,
+      Emoticon,
     };
     const create = await cmd[command].insert(object);
 
     if (create) {
-      socket.emit('client:message', 'A new ASCII has been created!');
+      socket.emit('client:message', 'A new Emoticon has been created!');
     } else {
-      socket.emit('client:message', 'Invalid ASCII ):');
+      socket.emit('client:message', 'Invalid Emoticon ):');
     }
   });
 });
