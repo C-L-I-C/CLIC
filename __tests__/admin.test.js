@@ -105,4 +105,52 @@ describe('Admin routes', () => {
       createdAt: expect.any(String),
     });
   });
+
+  it('should be able to get a Message by id', async () => {
+    const agent = request.agent(app);
+    await AdminService.create({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    await agent.post('/api/v1/admins/sessions').send({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    const res = await agent.get('/api/v1/admins/messages/1');
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      message: 'HELLO WORLD!',
+      userId: '1',
+      username: 'user 1',
+      createdAt: expect.any(String),
+    });
+  });
+
+  it('should be able to update a Message by id', async () => {
+    const agent = request.agent(app);
+    await AdminService.create({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    await agent.post('/api/v1/admins/sessions').send({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    const res = await agent.patch('/api/v1/admins/messages/1').send({
+      message: 'GOODBYE WORLD!',
+    });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      message: 'GOODBYE WORLD!',
+      userId: '1',
+      username: 'user 1',
+      createdAt: expect.any(String),
+    });
+  });
 });
