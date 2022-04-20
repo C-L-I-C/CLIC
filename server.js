@@ -3,6 +3,8 @@ const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const pool = require('./lib/utils/pool');
+const express = require('express');
+const socketIO = require('socket.io');
 
 const API_URL = process.env.API_URL || 'http://localhost';
 const PORT = process.env.PORT || 7890;
@@ -16,12 +18,27 @@ process.on('exit', () => {
   pool.end();
 });
 
-// SOCKET.IO SERVER
 
-//create socket.io server
-const io = require('socket.io')();
-// name a port for our server
+//HTTP SERVER FOR SOCKET IO PER HEROKU DOCS
 const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+const INDEX = '/index.html';
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(SOCKET_PORT, () => console.log(`Listening on ${SOCKET_PORT}`));
+
+const io = socketIO(server);
+
+
+
+
+
+
+// SOCKET.IO SERVER
+//create socket.io server
+// const io = require('socket.io')();
+// // name a port for our server
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 //user object to store names of user
 const users = {};
