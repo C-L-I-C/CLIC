@@ -9,15 +9,15 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 
 // const API_URL = process.env.API_URL || 'http://localhost';
-// const PORT = process.env.PORT || 7890;
-const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+const PORT = process.env.PORT || 7890;
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
 
-httpServer.listen(SOCKET_PORT, () => console.log(`Listening on ${SOCKET_PORT}`));
+httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 
 
