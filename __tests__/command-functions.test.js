@@ -1,4 +1,9 @@
-const { stringToBinary, binaryToString } = require('../lib/utils/binary');
+const {
+  stringToBinary,
+  binaryToString,
+  wordToPigLatin,
+  stringToPigLatin,
+} = require('../lib/utils/binary');
 
 describe('/ command functions', () => {
   it('should be able to convert a string to its value in binary code', () => {
@@ -20,5 +25,22 @@ describe('/ command functions', () => {
     const binary = '1001000 helloworld 1100100';
     const string = binaryToString(binary);
     expect(string).toEqual('Invalid input');
+  });
+
+  it('should return the Pig Latin version of the single word string input', () => {
+    const strVowel = 'animal';
+    const strCons = 'world';
+    const pigLatinVowel = wordToPigLatin(strVowel);
+    const pigLatinCons = wordToPigLatin(strCons);
+
+    expect(pigLatinVowel).toEqual('animalway');
+    expect(pigLatinCons).toEqual('orldway');
+  });
+
+  it('should return the Pig Latin version of the string input', () => {
+    const str = 'hello world, are you okay?';
+    const pigLatin = stringToPigLatin(str);
+
+    expect(pigLatin).toEqual('ellohay orldway areway ouyay okayway');
   });
 });
