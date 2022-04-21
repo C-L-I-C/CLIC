@@ -3,7 +3,8 @@
 const io = require('socket.io-client');
 // pass url of our server
 // const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
-const socket = io('https://cli-c.herokuapp.com/');
+// const socket = io('https://cli-c.herokuapp.com/');
+const socket = io('http://localhost:3000');
 // import readline to read from console
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
@@ -57,6 +58,8 @@ function handleEmoticon(prompt) {
   });
 }
 
+
+
 function promptOperation() {
   return inquirer.prompt({
     type: 'list',
@@ -77,6 +80,11 @@ async function checkInput(text) {
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
+        break;
+      case '/quote':
+        socket.emit('getQuote');
+        break;
+
     }
   } else {
     // send the user message to the socket server
