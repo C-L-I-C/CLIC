@@ -11,7 +11,7 @@ describe('CLIC routes', () => {
     pool.end();
   });
 
-  it('should be able to insert an instance of message into messages', async () => {
+  it('should be able to insert an instance of Message into messages', async () => {
     const res = await Message.insert({
       userId: '1',
       message: 'You rock!',
@@ -27,7 +27,7 @@ describe('CLIC routes', () => {
     });
   });
 
-  it('should get all the past messages', async () => {
+  it('should be able to get a list of each instance of Message from messages', async () => {
     const res = await Message.getAll();
 
     expect(res).toEqual([
