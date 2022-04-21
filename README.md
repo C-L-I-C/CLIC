@@ -25,10 +25,10 @@ Follow the command line instructions to start playing and chatting in your termi
 /history - View past chat history to pick up where you have left off.
 
 
-/binary - Fun binary function that will convert string to binary code.
+/encode - Fun binary function that will convert string to binary code.
 
 
-/quotes - Fetch daily inspirational quote to sparkle your day!
+/quote - Fetch daily inspirational quote to sparkle your day!
 
 
 /clicteam - Our team is what really makes us tick. Meet the brains behind CLIC!

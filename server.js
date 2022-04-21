@@ -150,13 +150,12 @@ io.on('connection', (socket) => {
   });
 });
 
+// listen for a disconnect event
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     //store users name
     users[socket.id];
-    console.log('********', users[socket.id]);
-
-    // now we want to emit an event to all users except that user, that the new user has joined the chat
+    // now we want to emit an event to all users except that user, that an user has left the chat
     socket.broadcast.emit(
       'client:message',
       `${users[socket.id]} has left the chat.`
