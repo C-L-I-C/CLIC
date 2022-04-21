@@ -3,7 +3,8 @@
 const io = require('socket.io-client');
 // pass url of our server
 // const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
-const socket = io('https://cli-c.herokuapp.com/');
+// const socket = io('https://cli-c.herokuapp.com/');
+const socket = io('http://localhost:3000');
 // import readline to read from console
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
@@ -77,6 +78,13 @@ async function checkInput(text) {
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
+        console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
+        break;
+      case '/history':
+        console.log(
+          chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
+        );
+        socket.emit('getHistory');
     }
   } else {
     // send the user message to the socket server
@@ -127,10 +135,9 @@ inquirer
     console.log(chalk.bold.magentaBright('You joined the chat'));
     console.log(
       chalk.rgb(255, 136, 0).bold('Type /commands for a list of commands')
-    ); // TODO: LIST AVAIL COMMANDS SELECT-LINE
-    console.log(
-      chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
     );
+    // TODO: LIST AVAIL COMMANDS SELECT-LINE
+
     //prompt user to type a message
     messagePrompt();
   })

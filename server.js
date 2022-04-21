@@ -9,30 +9,28 @@ const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
-const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
+// const httpServer = createServer(app);
+// const io = new Server(httpServer, {
+//   /* options */
+// });
 
-httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
+// httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // ORIGINAL EXPRESS SERVER METHOD
-// const API_URL = process.env.API_URL || 'http://localhost';
-// app.listen(PORT, () => {
-//   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
-// });
-// process.on('exit', () => {
-//   console.log('👋  Goodbye!');
-//   pool.end();
-// });
-
+const API_URL = process.env.API_URL || 'http://localhost';
+app.listen(PORT, () => {
+  console.log(`🚀  Server started on ${API_URL}:${PORT}`);
+});
+process.on('exit', () => {
+  console.log('👋  Goodbye!');
+  pool.end();
+});
 
 // SOCKET.IO SERVER ACCORDING TO TUTORIAL
-//create socket.io server
-// const io = require('socket.io')();
-// // name a port for our server
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-
-
+// create socket.io server
+const io = require('socket.io')();
+// name a port for our server
+const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 //user object to store names of user
 const users = {};
@@ -76,23 +74,8 @@ io.on('connection', (socket) => {
     await User.insert({
       username: name,
     });
-
-    const chatHistory = await Message.getHistory();
-
-    chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${
-        entry.message
-      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
-      socket.emit(
-        'client:message',
-        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
-      );
-    });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit(
-      'client:message',
-      randomTextColor`${name} joined the chat.`
-    );
+    socket.broadcast.emit('client:message', `${name} joined the chat.`);
   });
 
   // Listen for a message event
@@ -117,6 +100,22 @@ io.on('connection', (socket) => {
     });
     // emit an event to all users except that user
     io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
+  });
+
+  //listen for /history command
+  socket.on('getHistory', async () => {
+    //fetch chat history from our DB
+    const chatHistory = await Message.getHistory();
+
+    chatHistory.map((entry) => {
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
+    });
   });
 
   //listen for /getList command
@@ -152,6 +151,6 @@ io.on('connection', (socket) => {
 });
 
 //Starting up a server on SOCKET_PORT
-// io.listen(SOCKET_PORT, () => {
-//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-// });
+io.listen(SOCKET_PORT, () => {
+  console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+});
