@@ -150,6 +150,20 @@ io.on('connection', (socket) => {
   });
 });
 
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    //store users name
+    users[socket.id];
+    console.log('********', users[socket.id]);
+
+    // now we want to emit an event to all users except that user, that the new user has joined the chat
+    socket.broadcast.emit(
+      'client:message',
+      `${users[socket.id]} has left the chat.`
+    );
+  });
+});
+
 //Starting up a server on SOCKET_PORT
 io.listen(SOCKET_PORT, () => {
   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);

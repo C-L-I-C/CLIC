@@ -94,9 +94,13 @@ async function checkInput(text) {
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
         console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
+        console.log(chalk.rgb(192, 159, 209)('/signout - Leave Chatroom'));
         break;
       case '/history':
         await promptHistory();
+        break;
+      case '/signout':
+        socket.disconnect();
     }
   } else {
     // send the user message to the socket server
@@ -184,5 +188,3 @@ socket.on('selectList', async ([names, list]) => {
     })
     .catch((error) => console.log(error));
 });
-
-//
