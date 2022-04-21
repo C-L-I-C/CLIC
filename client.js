@@ -17,7 +17,6 @@ const CFonts = require('cfonts');
 const {
   stringToBinary,
   binaryToString,
-  wordToPigLatin,
   stringToPigLatin,
 } = require('./lib/utils/command-functions');
 
@@ -100,6 +99,19 @@ async function handleToString() {
     });
 }
 
+async function handleToPigLatin() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your message to Pig Latin',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = stringToPigLatin(answer.input);
+      socket.emit('server:message', message);
+    });
+}
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     switch (text) {
@@ -116,6 +128,9 @@ async function checkInput(text) {
         break;
       case '/decode':
         await handleToString();
+        break;
+      case '/piglatin':
+        await handleToPigLatin();
         break;
     }
   } else {
