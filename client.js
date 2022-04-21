@@ -8,6 +8,10 @@ const inquirer = require('inquirer');
 // import chalk to work with terminal styling
 // import chalk from 'chalk';
 const chalk = require('chalk');
+
+// import cfonts
+const CFonts = require('cfonts');
+
 // create an interface to get input from the terminal console
 async function messagePrompt() {
   return inquirer
@@ -79,6 +83,36 @@ async function checkInput(text) {
   }
 }
 
+CFonts.say('C.L.I.C', {
+  font: 'slick', // define the font face
+  align: 'left', // define text alignment
+  colors: 'red', // define all colors
+  background: 'transparent', // define the background color, you can also use `backgroundColor` here as key
+  letterSpacing: 2, // define letter spacing
+  lineHeight: 1, // define the line height
+  space: true, // define if the output text should have empty lines on top and on the bottom
+  maxLength: '0', // define how many character can be on one line
+  gradient: 'red,blue', // define your two gradient colors
+  independentGradient: false, // define if you want to recalculate the gradient for each new line
+  transitionGradient: false, // define if this is a transition between colors directly
+  env: 'node', // define the environment CFonts is being executed in
+});
+
+CFonts.say('The No.1|CLI Chat App', {
+  font: 'chrome', // define the font face
+  align: 'left', // define text alignment
+  colors: 'magenta', // define all colors
+  background: 'transparent', // define the background color, you can also use `backgroundColor` here as key
+  letterSpacing: 1, // define letter spacing
+  lineHeight: 1, // define the line height
+  space: true, // define if the output text should have empty lines on top and on the bottom
+  maxLength: '60', // define how many character can be on one line
+  gradient: false, // define your two gradient colors
+  independentGradient: false, // define if you want to recalculate the gradient for each new line
+  transitionGradient: false, // define if this is a transition between colors directly
+  env: 'node', // define the environment CFonts is being executed in
+});
+
 // Get the users name
 inquirer
   .prompt({
@@ -89,12 +123,12 @@ inquirer
   .then(({ username }) => {
     socket.emit('new user', username.trim());
     //let the user know they joined
-    console.log(chalk.bold.bgGreen('You joined the chat'));
+    console.log(chalk.bold.magentaBright('You joined the chat'));
     console.log(
       chalk.rgb(255, 136, 0).bold('Type /commands for a list of commands')
     ); // TODO: LIST AVAIL COMMANDS SELECT-LINE
     console.log(
-      chalk.bold.black.bgWhite('Here is a list of the Chat History: ')
+      chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
     );
     //prompt user to type a message
     messagePrompt();

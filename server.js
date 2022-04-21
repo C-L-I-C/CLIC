@@ -70,10 +70,13 @@ io.on('connection', (socket) => {
     const chatHistory = await Message.getHistory();
 
     chatHistory.map((entry) => {
-      const chat = `${entry.username} at ${entry.createdAt.toLocaleTimeString(
-        'en-US'
-      )} said ${entry.message}`;
-      socket.emit('client:message', chalk.italic.rgb(224, 212, 153)(chat));
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
     });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
     socket.broadcast.emit(
