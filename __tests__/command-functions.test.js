@@ -3,7 +3,7 @@ const {
   binaryToString,
   wordToPigLatin,
   stringToPigLatin,
-} = require('../lib/utils/binary');
+} = require('../lib/utils/command-functions');
 
 describe('/ command functions', () => {
   it('should be able to convert a string to its value in binary code', () => {
