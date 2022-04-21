@@ -1,8 +1,8 @@
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
-// const socket = io('https://cli-c.herokuapp.com/');
-const socket = io('http://localhost:3000');
+const socket = io('https://cli-c.herokuapp.com/');
+// const socket = io('http://localhost:3000'); //for local deploy
 //import inquirer
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
