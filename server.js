@@ -2,29 +2,66 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
-const pool = require('./lib/utils/pool');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
-const API_URL = process.env.API_URL || 'http://localhost';
 const PORT = process.env.PORT || 7890;
+const chalk = require('chalk');
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
+const httpServer = createServer(app);
+const io = new Server(httpServer, { /* options */ });
 
-app.listen(PORT, () => {
-  console.log(`🚀  Server started on ${API_URL}:${PORT}`);
-});
+httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-process.on('exit', () => {
-  console.log('👋  Goodbye!');
-  pool.end();
-});
 
-// SOCKET.IO SERVER
+// ORIGINAL EXPRESS SERVER METHOD
+// const API_URL = process.env.API_URL || 'http://localhost';
+// app.listen(PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
+// });
+// process.on('exit', () => {
+//   console.log('👋  Goodbye!');
+//   pool.end();
+// });
 
+
+// SOCKET.IO SERVER ACCORDING TO TUTORIAL
 //create socket.io server
-const io = require('socket.io')();
-// name a port for our server
-const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+// const io = require('socket.io')();
+// // name a port for our server
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+
+
 
 //user object to store names of user
 const users = {};
+
+// randomColor methods
+const chalkBackgroundColors = [
+  chalk.bgCyan,
+  chalk.bgBlue,
+  chalk.bgRed,
+  chalk.bgYellow,
+];
+
+const randomBackgroundColor =
+  chalkBackgroundColors[
+    Math.floor(Math.random() * chalkBackgroundColors.length)
+  ];
+
+const chalkTextColors = [
+  chalk.redBright,
+  chalk.yellowBright,
+  chalk.greenBright,
+  chalk.blueBright,
+  chalk.whiteBright,
+  chalk.magentaBright,
+  chalk.cyanBright,
+];
+
+const randomTextColor =
+  chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
 
 // Listen for connection event
 io.on('connection', (socket) => {
@@ -41,15 +78,21 @@ io.on('connection', (socket) => {
     });
 
     const chatHistory = await Message.getHistory();
-    console.log('CHAT HISTORY', chatHistory);
+
     chatHistory.map((entry) => {
-      const chat = `${entry.username} at ${entry.createdAt.toLocaleTimeString(
-        'en-US'
-      )} said ${entry.message}`;
-      socket.emit('client:message', chat);
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
     });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit('client:message', `${name} joined the chat.`);
+    socket.broadcast.emit(
+      'client:message',
+      randomTextColor`${name} joined the chat.`
+    );
   });
 
   // Listen for a message event
@@ -60,7 +103,10 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
+    socket.broadcast.emit(
+      'client:message',
+      randomBackgroundColor`${users[socket.id]}: ${text}`
+    );
   });
 
   socket.on('emitEmoticon', async (text) => {
@@ -70,7 +116,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    io.emit('client:message', `${users[socket.id]}: ${text}`);
+    io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
   });
 
   //listen for /getList command
@@ -95,14 +141,17 @@ io.on('connection', (socket) => {
     const create = await cmd[command].insert(object);
 
     if (create) {
-      socket.emit('client:message', 'A new Emoticon has been created!');
+      socket.emit(
+        'client:message',
+        chalk.bold.red('A new Emoticon has been created!')
+      );
     } else {
-      socket.emit('client:message', 'Invalid Emoticon ):');
+      socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
     }
   });
 });
 
-//Starting up a server on PORT
-io.listen(SOCKET_PORT, () => {
-  console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-});
+//Starting up a server on SOCKET_PORT
+// io.listen(SOCKET_PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+// });
