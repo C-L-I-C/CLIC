@@ -2,35 +2,37 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
+// const { createServer } = require('http');
+// const { Server } = require('socket.io');
+const pool = require('./lib/utils/pool');
 
 const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
-const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
 
-httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+
+// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
+// const httpServer = createServer(app);
+// const io = new Server(httpServer, { /* options */ });
+// httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 
 // ORIGINAL EXPRESS SERVER METHOD
-// const API_URL = process.env.API_URL || 'http://localhost';
-// app.listen(PORT, () => {
-//   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
-// });
-// process.on('exit', () => {
-//   console.log('👋  Goodbye!');
-//   pool.end();
-// });
+const API_URL = process.env.API_URL || 'http://localhost';
+app.listen(PORT, () => {
+  console.log(`🚀  Server started on ${API_URL}:${PORT}`);
+});
+process.on('exit', () => {
+  console.log('👋  Goodbye!');
+  pool.end();
+});
 
 
 // SOCKET.IO SERVER ACCORDING TO TUTORIAL
 //create socket.io server
-// const io = require('socket.io')();
-// // name a port for our server
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+const io = require('socket.io')();
+// name a port for our server
+const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 
 
@@ -47,7 +49,7 @@ const chalkBackgroundColors = [
 
 const randomBackgroundColor =
   chalkBackgroundColors[
-    Math.floor(Math.random() * chalkBackgroundColors.length)
+  Math.floor(Math.random() * chalkBackgroundColors.length)
   ];
 
 const chalkTextColors = [
@@ -80,9 +82,8 @@ io.on('connection', (socket) => {
     const chatHistory = await Message.getHistory();
 
     chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${
-        entry.message
-      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      const chat = `${entry.username} said ${entry.message
+        } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
       socket.emit(
         'client:message',
         chalk.italic.rgb(224, 212, 153).bgWhite(chat)
@@ -151,7 +152,7 @@ io.on('connection', (socket) => {
   });
 });
 
-//Starting up a server on SOCKET_PORT
-// io.listen(SOCKET_PORT, () => {
-//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-// });
+// Starting up a server on SOCKET_PORT
+io.listen(SOCKET_PORT, () => {
+  console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+});
