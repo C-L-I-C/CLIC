@@ -21,14 +21,92 @@ Follow the command line instructions to start playing and chatting in your termi
 
 /emoticons - View a list of Emoticons or create your own fun Emoticons!
 
-
 /history - View past chat history to pick up where you have left off.
 
+/encode - Convert you message to binary code.
 
-/encode - Fun binary function that will convert string to binary code.
+/decode - Translate your binary code to message.
 
+/quote - Fetch daily inspirational quote to sparkle ✨ your day!
 
-/quote - Fetch daily inspirational quote to sparkle your day!
+/piglatin - Translate your message to Pig Latin 🐷 .
 
+/about - Our team is what really makes us tick. Meet the brains behind CLIC!
 
-/clicteam - Our team is what really makes us tick. Meet the brains behind CLIC!
+/signout - Sign out of chatroom.
+
+### Routes (For Admin Use Only)
+
+#### GET
+
+The following are descriptions of the data that should be returned from the various `GET` methods.
+
+##### `GET /user`
+
+```
+[{ id, username, email }]
+```
+
+##### `GET /user/:id`
+
+```
+{ id, email, username }
+```
+
+##### `GET /message/`
+
+```
+{ id, username, userId, message, createdAt}
+```
+
+##### `GET /message/:id`
+
+```
+{ id, username, userId, message, createdAt}
+```
+
+##### `GET /emoticon`
+
+```
+{ id, name, string}
+```
+
+##### `GET /emoticon/:name`
+
+```
+{ id, name, string}
+```
+
+#### PATCH
+
+The following are descriptions of the data that should be returned from the various `PATCH` methods.
+
+##### `PATCH /message/:id`
+
+- PATCH: username, message can be updated by id
+
+##### `PATCH /emoticon/:name`
+
+- PATCH: name, string can be updated by name
+
+#### DELETE
+
+The following are descriptions of the data that should be returned from the various `DELETE` methods.
+
+##### `DELETE /message/:id`
+
+Admin can delete an instance of message by id
+
+##### `DELETE /emoticon/:name`
+
+Admin can delete an instance of Emoticon by name
+
+#### POST
+
+##### `POST /`
+
+- POST: Admin can insert an instance of admin with email and password
+
+##### `POST /session`
+
+- POST: Sign in an existing Admin with an email and password.
