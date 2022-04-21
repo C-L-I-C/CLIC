@@ -4,6 +4,7 @@ const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const getQuote = require('./lib/utils/QuoteUtils');
 
 const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
@@ -47,7 +48,7 @@ const chalkBackgroundColors = [
 
 const randomBackgroundColor =
   chalkBackgroundColors[
-    Math.floor(Math.random() * chalkBackgroundColors.length)
+  Math.floor(Math.random() * chalkBackgroundColors.length)
   ];
 
 const chalkTextColors = [
@@ -80,9 +81,8 @@ io.on('connection', (socket) => {
     const chatHistory = await Message.getHistory();
 
     chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${
-        entry.message
-      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      const chat = `${entry.username} said ${entry.message
+        } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
       socket.emit(
         'client:message',
         chalk.italic.rgb(224, 212, 153).bgWhite(chat)
