@@ -15,4 +15,10 @@ describe('/ command functions', () => {
     const string = binaryToString(binary);
     expect(string).toEqual('Hello World');
   });
+
+  it('should return Invalid input if input is not a binary code', () => {
+    const binary = '1001000 helloworld 1100100';
+    const string = binaryToString(binary);
+    expect(string).toEqual('Invalid input');
+  });
 });
