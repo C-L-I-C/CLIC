@@ -3,7 +3,8 @@
 const io = require('socket.io-client');
 // pass url of our server
 // const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
-const socket = io('https://cli-c.herokuapp.com/');
+const socket = io('http://localhost:3000');
+// const socket = io('https://cli-c.herokuapp.com/');
 // import readline to read from console
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
@@ -12,6 +13,13 @@ const chalk = require('chalk');
 
 // import cfonts
 const CFonts = require('cfonts');
+
+const {
+  stringToBinary,
+  binaryToString,
+  wordToPigLatin,
+  stringToPigLatin,
+} = require('./lib/utils/command-functions');
 
 // create an interface to get input from the terminal console
 async function messagePrompt() {
@@ -66,17 +74,49 @@ function promptOperation() {
   });
 }
 
+async function handleToBinary() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Convert your message to binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const binary = stringToBinary(answer.input);
+      socket.emit('server:message', binary);
+    });
+}
+
+async function handleToString() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = binaryToString(answer.input);
+      socket.emit('server:message', message);
+    });
+}
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     switch (text) {
       case '/emoticon':
-        const prompt = promptOperation();
-        await handleEmoticon(prompt);
+        await handleEmoticon(promptOperation());
         break;
       case '/commands':
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
+        break;
+      case '/encode':
+        await handleToBinary();
+        break;
+      case '/decode':
+        await handleToString();
+        break;
     }
   } else {
     // send the user message to the socket server
