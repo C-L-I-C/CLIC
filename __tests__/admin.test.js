@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const AdminService = require('../lib/services/AdminService');
+const Admin = require('../lib/models/Admin');
 
 describe('Admin routes', () => {
   beforeEach(() => {
@@ -41,6 +42,20 @@ describe('Admin routes', () => {
     expect(res.body).toEqual({
       message: 'Signed in successfully!',
       admin,
+    });
+  });
+
+  it('should be able to get an instance of Admin from admins by email', async () => {
+    await AdminService.create({
+      email: 'user@admin.com',
+      password: 'whatever',
+    });
+
+    const res = await Admin.findByEmail('user@admin.com');
+
+    expect(res).toEqual({
+      id: expect.any(String),
+      email: 'user@admin.com',
     });
   });
 
