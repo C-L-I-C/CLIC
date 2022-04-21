@@ -67,12 +67,27 @@ function promptOperation() {
   });
 }
 
+function promptHistory() {
+  return inquirer
+    .prompt({
+      type: 'list',
+      message: 'How many recent chat messages would you like to peek at?',
+      name: 'history',
+      choices: ['5', '10', '15', '20'],
+    })
+    .then((answer) => {
+      console.log(
+        chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
+      );
+      socket.emit('getHistory', answer.history);
+    });
+}
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     switch (text) {
       case '/emoticon':
-        const prompt = promptOperation();
-        await handleEmoticon(prompt);
+        await handleEmoticon(promptOperation());
         break;
       case '/commands':
         console.log(
@@ -81,10 +96,7 @@ async function checkInput(text) {
         console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
         break;
       case '/history':
-        console.log(
-          chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
-        );
-        socket.emit('getHistory');
+        await promptHistory();
     }
   } else {
     // send the user message to the socket server

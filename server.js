@@ -103,9 +103,9 @@ io.on('connection', (socket) => {
   });
 
   //listen for /history command
-  socket.on('getHistory', async () => {
+  socket.on('getHistory', async (historyCount) => {
     //fetch chat history from our DB
-    const chatHistory = await Message.getHistory();
+    const chatHistory = await Message.getHistory(Number(historyCount));
 
     chatHistory.map((entry) => {
       const chat = `${entry.username} said ${
