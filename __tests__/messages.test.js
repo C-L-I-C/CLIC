@@ -11,7 +11,7 @@ describe('CLIC routes', () => {
     pool.end();
   });
 
-  it('should be able to insert an instance of message into messages', async () => {
+  it('should be able to insert an instance of Message into messages', async () => {
     const res = await Message.insert({
       userId: '1',
       message: 'You rock!',
@@ -27,7 +27,7 @@ describe('CLIC routes', () => {
     });
   });
 
-  it('should get all the past messages', async () => {
+  it('should be able to get a list of each instance of Message from messages', async () => {
     const res = await Message.getAll();
 
     expect(res).toEqual([
@@ -48,7 +48,18 @@ describe('CLIC routes', () => {
     ]);
   });
 
-  it('should get the last 10 chat history messages', async () => {
+  it('should be able to get an instance of Message from messages by id', async () => {
+    const res = await Message.getById(1);
+    expect(res).toEqual({
+      id: expect.any(String),
+      message: 'HELLO WORLD!',
+      userId: '1',
+      username: 'user 1',
+      createdAt: expect.any(Date),
+    });
+  });
+
+  it('should be able to get the last x instances of Message from messages', async () => {
     await Message.insert({
       userId: '1',
       message: 'You rock!',
@@ -82,5 +93,29 @@ describe('CLIC routes', () => {
     const res = await Message.getHistory();
 
     expect(res).toEqual(expected);
+  });
+
+  it('should be able to update an instance of Message from messages by id', async () => {
+    const res = await Message.updateById(1, {
+      message: 'Goodbye',
+    });
+    expect(res).toEqual({
+      createdAt: expect.any(Date),
+      id: '1',
+      message: 'Goodbye',
+      userId: '1',
+      username: 'user 1',
+    });
+  });
+
+  it('should be able to delete an instance of Message from messages by id', async () => {
+    const res = await Message.deleteById(1);
+    expect(res).toEqual({
+      id: expect.any(String),
+      message: 'HELLO WORLD!',
+      userId: '1',
+      username: 'user 1',
+      createdAt: expect.any(Date),
+    });
   });
 });

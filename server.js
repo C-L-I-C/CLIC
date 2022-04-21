@@ -6,15 +6,13 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 
 const PORT = process.env.PORT || 7890;
+const chalk = require('chalk');
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-
-
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
 
 httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
 
 
 // ORIGINAL EXPRESS SERVER METHOD
@@ -39,6 +37,32 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //user object to store names of user
 const users = {};
 
+// randomColor methods
+const chalkBackgroundColors = [
+  chalk.bgCyan,
+  chalk.bgBlue,
+  chalk.bgRed,
+  chalk.bgYellow,
+];
+
+const randomBackgroundColor =
+  chalkBackgroundColors[
+    Math.floor(Math.random() * chalkBackgroundColors.length)
+  ];
+
+const chalkTextColors = [
+  chalk.redBright,
+  chalk.yellowBright,
+  chalk.greenBright,
+  chalk.blueBright,
+  chalk.whiteBright,
+  chalk.magentaBright,
+  chalk.cyanBright,
+];
+
+const randomTextColor =
+  chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
+
 // Listen for connection event
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
@@ -54,15 +78,21 @@ io.on('connection', (socket) => {
     });
 
     const chatHistory = await Message.getHistory();
-    console.log('CHAT HISTORY', chatHistory);
+
     chatHistory.map((entry) => {
-      const chat = `${entry.username} at ${entry.createdAt.toLocaleTimeString(
-        'en-US'
-      )} said ${entry.message}`;
-      socket.emit('client:message', chat);
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
     });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit('client:message', `${name} joined the chat.`);
+    socket.broadcast.emit(
+      'client:message',
+      randomTextColor`${name} joined the chat.`
+    );
   });
 
   // Listen for a message event
@@ -73,7 +103,10 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
+    socket.broadcast.emit(
+      'client:message',
+      randomBackgroundColor`${users[socket.id]}: ${text}`
+    );
   });
 
   socket.on('emitEmoticon', async (text) => {
@@ -83,7 +116,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    io.emit('client:message', `${users[socket.id]}: ${text}`);
+    io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
   });
 
   //listen for /getList command
@@ -108,9 +141,12 @@ io.on('connection', (socket) => {
     const create = await cmd[command].insert(object);
 
     if (create) {
-      socket.emit('client:message', 'A new Emoticon has been created!');
+      socket.emit(
+        'client:message',
+        chalk.bold.red('A new Emoticon has been created!')
+      );
     } else {
-      socket.emit('client:message', 'Invalid Emoticon ):');
+      socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
     }
   });
 });

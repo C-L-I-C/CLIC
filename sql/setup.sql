@@ -1,8 +1,15 @@
 -- Use this file to define your SQL tables
 -- The SQL in this file will be executed when you run `npm run setup-db`
+DROP TABLE IF EXISTS admins CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS emoticon CASCADE;
+DROP TABLE IF EXISTS emoticons CASCADE;
+
+CREATE TABLE admins (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email TEXT NOT NULL,
+    password_hash TEXT NOT NULL
+);
 
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -18,9 +25,9 @@ CREATE TABLE messages (
     username TEXT NOT NULL
 );
 
-CREATE TABLE emoticon (
+CREATE TABLE emoticons (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL,
+    name TEXT UNIQUE NOT NULL,
     string TEXT NOT NULL
 );
 
@@ -34,7 +41,7 @@ VALUES
 ('HELLO WORLD!', '1', 'user 1'),
 ('Goodbye, see you next time!', '2', 'user 2');
 
-INSERT INTO emoticon (name, string)
+INSERT INTO emoticons (name, string)
 VALUES 
 ('smileycat', '=(^_^)='),
 ('robot', 'd[ o_0 ]b');
