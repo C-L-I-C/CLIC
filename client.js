@@ -83,7 +83,7 @@ async function checkInput(text) {
 inquirer
   .prompt({
     type: 'input',
-    message: 'Enter your username: ',
+    message: chalk.green('Enter your username: '),
     name: 'username',
   })
   .then(({ username }) => {

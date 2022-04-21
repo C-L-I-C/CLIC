@@ -27,6 +27,10 @@ const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 //user object to store names of user
 const users = {};
 
+// randomColor method
+const chalkColors = [chalk.bgCyan, chalk.bgBlue, chalk.bgRed, chalk.bgYellow];
+const randomColor = chalkColors[Math.floor(Math.random() * chalkColors.length)];
+
 // Listen for connection event
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
@@ -64,7 +68,10 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`);
+    socket.broadcast.emit(
+      'client:message',
+      randomColor`${users[socket.id]}: ${text}`
+    );
   });
 
   socket.on('emitEmoticon', async (text) => {
