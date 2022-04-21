@@ -184,3 +184,5 @@ socket.on('selectList', async ([names, list]) => {
     })
     .catch((error) => console.log(error));
 });
+
+//
