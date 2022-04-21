@@ -3,7 +3,7 @@
 DROP TABLE IF EXISTS admins CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS emoticon CASCADE;
+DROP TABLE IF EXISTS emoticons CASCADE;
 
 CREATE TABLE admins (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -25,9 +25,9 @@ CREATE TABLE messages (
     username TEXT NOT NULL
 );
 
-CREATE TABLE emoticon (
+CREATE TABLE emoticons (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL,
+    name TEXT UNIQUE NOT NULL,
     string TEXT NOT NULL
 );
 
@@ -41,7 +41,7 @@ VALUES
 ('HELLO WORLD!', '1', 'user 1'),
 ('Goodbye, see you next time!', '2', 'user 2');
 
-INSERT INTO emoticon (name, string)
+INSERT INTO emoticons (name, string)
 VALUES 
 ('smileycat', '=(^_^)='),
 ('robot', 'd[ o_0 ]b');
