@@ -27,9 +27,31 @@ const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 //user object to store names of user
 const users = {};
 
-// randomColor method
-const chalkColors = [chalk.bgCyan, chalk.bgBlue, chalk.bgRed, chalk.bgYellow];
-const randomColor = chalkColors[Math.floor(Math.random() * chalkColors.length)];
+// randomColor methods
+const chalkBackgroundColors = [
+  chalk.bgCyan,
+  chalk.bgBlue,
+  chalk.bgRed,
+  chalk.bgYellow,
+];
+
+const randomBackgroundColor =
+  chalkBackgroundColors[
+    Math.floor(Math.random() * chalkBackgroundColors.length)
+  ];
+
+const chalkTextColors = [
+  chalk.redBright,
+  chalk.yellowBright,
+  chalk.greenBright,
+  chalk.blueBright,
+  chalk.whiteBright,
+  chalk.magentaBright,
+  chalk.cyanBright,
+];
+
+const randomTextColor =
+  chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
 
 // Listen for connection event
 io.on('connection', (socket) => {
@@ -56,7 +78,7 @@ io.on('connection', (socket) => {
     // now we want to emit an event to all users except that user, that the new user has joined the chat
     socket.broadcast.emit(
       'client:message',
-      chalk.cyan`${name} joined the chat.`
+      randomTextColor`${name} joined the chat.`
     );
   });
 
@@ -70,7 +92,7 @@ io.on('connection', (socket) => {
     // emit an event to all users except that user
     socket.broadcast.emit(
       'client:message',
-      randomColor`${users[socket.id]}: ${text}`
+      randomBackgroundColor`${users[socket.id]}: ${text}`
     );
   });
 
@@ -81,7 +103,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    io.emit('client:message', chalk.bgGreen`${users[socket.id]}: ${text}`);
+    io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
   });
 
   //listen for /getList command
