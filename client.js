@@ -1,6 +1,8 @@
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
+// const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
+// const socket = io('http://localhost:3000');
 const socket = io('https://cli-c.herokuapp.com/');
 // const socket = io('http://localhost:3000'); //for local deploy
 //import inquirer
@@ -9,6 +11,12 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 // import cfonts
 const CFonts = require('cfonts');
+
+const {
+  stringToBinary,
+  binaryToString,
+  stringToPigLatin,
+} = require('./lib/utils/command-functions');
 
 // create an interface to get input from the terminal console
 async function messagePrompt() {
@@ -63,6 +71,45 @@ function promptOperation() {
   });
 }
 
+async function handleToBinary() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Convert your message to binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const binary = stringToBinary(answer.input);
+      socket.emit('server:message', binary);
+    });
+}
+
+async function handleToString() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = binaryToString(answer.input);
+      socket.emit('server:message', message);
+    });
+}
+
+async function handleToPigLatin() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your message to Pig Latin',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = stringToPigLatin(answer.input);
+      socket.emit('server:message', message);
+    });
+}
+
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     switch (text) {
@@ -74,8 +121,7 @@ async function checkInput(text) {
         console.log(chalk.rgb(0, 255, 0)('Ryan F. is a software dev living in Portland, OR.\nHis favorite emoticon: ≧◠‿◠≦✌\n'));
         break;
       case '/emoticon':
-        const prompt = promptOperation();
-        await handleEmoticon(prompt);
+        await handleEmoticon(promptOperation());
         break;
       case '/commands':
         console.log(
@@ -84,6 +130,16 @@ async function checkInput(text) {
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
+        break;
+      case '/encode':
+        await handleToBinary();
+        break;
+      case '/decode':
+        await handleToString();
+        break;
+      case '/piglatin':
+        await handleToPigLatin();
+        break;
     }
   } else {
     // send the user message to the socket server

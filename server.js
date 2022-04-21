@@ -2,6 +2,7 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
+
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 // const pool = require('./lib/utils/pool'); //needed for local deploy
@@ -27,9 +28,11 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //   pool.end();
 // });
 
+
 // // SOCKET.IO SERVER ACCORDING TO TUTORIAL - NEEDED FOR LOCAL DEPLOY
 // // create socket.io server
 // // name a port for our server
+
 // const io = require('socket.io')();
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
@@ -37,7 +40,6 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 // io.listen(SOCKET_PORT, () => {
 //   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
 // });
-
 
 
 //user object to store names of user
