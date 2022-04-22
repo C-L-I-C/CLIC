@@ -93,9 +93,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit(
-      'client:message',
-      randomBackgroundColor`${users[socket.id]}: ${text}`
+    socket.broadcast.emit('client:message', chalk.bgCyan`${users[socket.id]}: ${text}`
     );
   });
 
