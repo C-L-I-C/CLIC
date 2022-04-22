@@ -18,6 +18,32 @@ const {
   stringToPigLatin,
 } = require('./lib/utils/command-functions');
 
+// randomColor methods
+const chalkBackgroundColors = [
+  chalk.bgCyan,
+  chalk.bgBlue,
+  chalk.bgRed,
+  chalk.bgYellow,
+];
+
+const randomBackgroundColor =
+  chalkBackgroundColors[Math.floor(Math.random() * chalkBackgroundColors.length)];
+
+const chalkTextColors = [
+  chalk.redBright,
+  chalk.yellowBright,
+  chalk.greenBright,
+  chalk.blueBright,
+  chalk.whiteBright,
+  chalk.magentaBright,
+  chalk.cyanBright,
+];
+
+function randomTextColor() {
+  return chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
+}
+
+
 // create an interface to get input from the terminal console
 async function messagePrompt() {
   return inquirer
@@ -144,15 +170,15 @@ async function checkInput(text) {
         await handleEmoticon(promptOperation());
         break;
       case '/commands':
-        console.log(chalk.rgb(192, 159, 209)('/about - See about the developers'));
-        console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
-        console.log(chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon Art'));
-        console.log(chalk.rgb(192, 159, 209)('/quote - Get a random quote'));
-        console.log(chalk.rgb(192, 159, 209)('/dad - Get a random dad joke'));
-        console.log(chalk.rgb(192, 159, 209)('/encode - Encode and send a message in binary'));
-        console.log(chalk.rgb(192, 159, 209)('/decode - Decode a binary coded message'));
-        console.log(chalk.rgb(192, 159, 209)('/piglatin - Translate and send your message in pig latin'));
-        console.log(chalk.rgb(192, 159, 209)('/signout - Leave Chatroom'));
+        console.log(randomTextColor()('/about - See about the developers'));
+        console.log(randomTextColor()('/history - View Chat History'));
+        console.log(randomTextColor()('/emoticon - Print or Create Emoticon Art'));
+        console.log(randomTextColor()('/quote - Get a random quote'));
+        console.log(randomTextColor()('/dad - Get a random dad joke'));
+        console.log(randomTextColor()('/encode - Encode and send a message in binary'));
+        console.log(randomTextColor()('/decode - Decode a binary coded message'));
+        console.log(randomTextColor()('/piglatin - Translate and send your message in pig latin'));
+        console.log(randomTextColor()('/signout - Leave Chatroom'));
         break;
       case '/quote':
         socket.emit('getQuote');
@@ -239,7 +265,7 @@ socket.on('client:message', (text) => {
   // erases the current line in the console and rewrites something
   process.stdout.write('\r\x1b[K');
   // log out text of message
-  if (text.length) console.log(text);
+  if (text.length) console.log(randomBackgroundColor(text));
   //console log out arrow without doing a new line
   process.stdout.write('> ');
 });

@@ -5,8 +5,7 @@ const User = require('./lib/models/User');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
-const chalk = require('chalk');
-// const { text } = require('express');
+
 // const pool = require('./lib/utils/pool'); //needed for local deploy
 
 const PORT = process.env.PORT || 7890;
@@ -43,30 +42,6 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //user object to store names of user
 const users = {};
 
-// randomColor methods
-const chalkBackgroundColors = [
-  chalk.bgCyan,
-  chalk.bgBlue,
-  chalk.bgRed,
-  chalk.bgYellow,
-];
-
-const randomBackgroundColor =
-  chalkBackgroundColors[Math.floor(Math.random() * chalkBackgroundColors.length)];
-
-const chalkTextColors = [
-  chalk.redBright,
-  chalk.yellowBright,
-  chalk.greenBright,
-  chalk.blueBright,
-  chalk.whiteBright,
-  chalk.magentaBright,
-  chalk.cyanBright,
-];
-
-const randomTextColor =
-  chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
-
 // Listen for connection event
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
@@ -93,7 +68,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    socket.broadcast.emit('client:message', chalk.bgCyan`${users[socket.id]}: ${text}`
+    socket.broadcast.emit('client:message', `${users[socket.id]}: ${text}`
     );
   });
 
@@ -104,7 +79,7 @@ io.on('connection', (socket) => {
       username: `${users[socket.id]}`,
     });
     // emit an event to all users except that user
-    io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
+    io.emit('client:message', `${users[socket.id]}: ${text}`);
   });
 
 
@@ -135,7 +110,7 @@ io.on('connection', (socket) => {
       const chat = `${entry.username} said ${entry.message} at ${entry.createdAt.toLocaleTimeString('en-US')}`;
       socket.emit(
         'client:message',
-        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+        chat
       );
     });
   });
@@ -163,11 +138,9 @@ io.on('connection', (socket) => {
 
     if (create) {
       socket.emit(
-        'client:message',
-        chalk.bold.red('A new Emoticon has been created!')
-      );
+        'client:message', 'A new Emoticon has been created!');
     } else {
-      socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
+      socket.emit('client:message', 'Invalid Emoticon ):');
     }
   });
 
