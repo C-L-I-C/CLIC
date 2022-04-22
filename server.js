@@ -2,15 +2,14 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
-
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
+const chalk = require('chalk');
+const { text } = require('express');
 // const pool = require('./lib/utils/pool'); //needed for local deploy
 
 const PORT = process.env.PORT || 7890;
-const chalk = require('chalk');
-
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS - FOR HEROKU DEPLOY
@@ -29,11 +28,9 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //   pool.end();
 // });
 
-
 // // SOCKET.IO SERVER ACCORDING TO TUTORIAL - NEEDED FOR LOCAL DEPLOY
 // // create socket.io server
 // // name a port for our server
-
 // const io = require('socket.io')();
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
@@ -114,6 +111,23 @@ io.on('connection', (socket) => {
     io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
   });
 
+
+  socket.on('getQuote', async () => {
+    const quote = await getQuote();
+    io.emit('client:message', `${users[socket.id]}: Quote for the day!: ${quote[0].q} -${quote[0].a}`);
+  });
+  
+  socket.on('getJoke', async () => {
+    try {
+      const joke = await getDadJoke();
+
+      io.emit('client:message', `${users[socket.id]}: ${joke.body[0].setup}..... ${joke.body[0].punchline}`);
+
+    } catch (error) {
+      console.error(error)
+    }
+  });
+
   //listen for /history command
   socket.on('getHistory', async (historyCount) => {
     //fetch chat history from our DB
@@ -160,6 +174,7 @@ io.on('connection', (socket) => {
       socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
     }
   });
+
 });
 
 

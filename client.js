@@ -1,7 +1,7 @@
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
-// const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
+
 const socket = io('https://cli-c.herokuapp.com/');
 // const socket = io('http://localhost:3000'); //for local deploy
 
@@ -61,6 +61,8 @@ function handleEmoticon(prompt) {
     }
   });
 }
+
+
 
 function promptOperation() {
   return inquirer.prompt({
@@ -148,6 +150,12 @@ async function checkInput(text) {
         );
         console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
         console.log(chalk.rgb(192, 159, 209)('/signout - Leave Chatroom'));
+        break;
+      case '/quote':
+        socket.emit('getQuote');
+        break;
+      case '/dad':
+        socket.emit('getJoke');
         break;
       case '/history':
         await promptHistory();
