@@ -129,7 +129,9 @@ io.on('connection', (socket) => {
     //fetch chat history from our DB
     const chatHistory = await Message.getHistory(Number(historyCount));
 
-    chatHistory.map((entry) => {
+    const reversedHistory = chatHistory.reverse();
+
+    reversedHistory.map((entry) => {
       const chat = `${entry.username} said ${entry.message} at ${entry.createdAt.toLocaleTimeString('en-US')}`;
       socket.emit(
         'client:message',
