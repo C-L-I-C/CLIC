@@ -5,12 +5,11 @@ const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const getQuote = require('./lib/utils/QuoteUtils');
-
+const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
 const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
-// const { text } = require('express');
-// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+const { text } = require('express');
+const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
@@ -29,10 +28,10 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 // });
 
 
-// // SOCKET.IO SERVER ACCORDING TO TUTORIAL
-// //create socket.io server
+// SOCKET.IO SERVER ACCORDING TO TUTORIAL
+//create socket.io server
 // const io = require('socket.io')();
-// // name a port for our server
+// name a port for our server
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
 
@@ -125,6 +124,16 @@ io.on('connection', (socket) => {
     const quote = await getQuote();
     io.emit('client:message', `${users[socket.id]}: Quote for the day!: ${quote[0].q} -${quote[0].a}`);
   });
+  socket.on('getJoke', async () => {
+    try {
+      const joke = await getDadJoke();
+
+      io.emit('client:message', `${users[socket.id]}: ${joke.body[0].setup}.....${joke.body[0].punchline}`);
+
+    } catch (error) {
+      console.error(error)
+    }
+  });
 
 
 
@@ -163,7 +172,7 @@ io.on('connection', (socket) => {
 });
 
 
-//Starting up a server on SOCKET_PORT
+// Starting up a server on SOCKET_PORT
 // io.listen(SOCKET_PORT, () => {
 //   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
 // });

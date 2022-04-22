@@ -84,6 +84,9 @@ async function checkInput(text) {
       case '/quote':
         socket.emit('getQuote');
         break;
+      case '/dad':
+        socket.emit('getJoke');
+        break;
 
     }
   } else {
