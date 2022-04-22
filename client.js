@@ -1,18 +1,22 @@
-// socket.io client
 // Import socket.io client module
 const io = require('socket.io-client');
 // pass url of our server
 // const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
-// const socket = io('https://cli-c.herokuapp.com/');
-const socket = io('http://localhost:3000');
-// import readline to read from console
+const socket = io('https://cli-c.herokuapp.com/');
+// const socket = io('http://localhost:3000'); //for local deploy
+
+//import inquirer
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
-// import chalk from 'chalk';
 const chalk = require('chalk');
-
 // import cfonts
 const CFonts = require('cfonts');
+
+const {
+  stringToBinary,
+  binaryToString,
+  stringToPigLatin,
+} = require('./lib/utils/command-functions');
 
 // create an interface to get input from the terminal console
 async function messagePrompt() {
@@ -67,6 +71,7 @@ function promptOperation() {
   });
 }
 
+
 function promptHistory() {
   return inquirer
     .prompt({
@@ -80,16 +85,64 @@ function promptHistory() {
         chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
       );
       socket.emit('getHistory', answer.history);
+
+async function handleToBinary() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Convert your message to binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const binary = stringToBinary(answer.input);
+      socket.emit('server:message', binary);
+    });
+}
+
+async function handleToString() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your binary code',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = binaryToString(answer.input);
+      socket.emit('server:message', message);
+    });
+}
+
+async function handleToPigLatin() {
+  return inquirer
+    .prompt({
+      type: 'input',
+      message: 'Translate your message to Pig Latin',
+      name: 'input',
+    })
+    .then((answer) => {
+      const message = stringToPigLatin(answer.input);
+      socket.emit('server:message', message);
+
     });
 }
 
 async function checkInput(text) {
   if (text.charAt(0) === '/') {
     switch (text) {
+      case '/about':
+        console.log(chalk.rgb(255, 136, 0).bold('About the developers!\n'));
+        console.log(chalk.rgb(255, 192, 203)('Alice H. is a software dev living in Beaverton, OR.\nHer favorite emoticon: ღゝ◡╹)ノ♡'));
+        console.log(chalk.rgb(175, 105, 240)('Clayton K. is a software dev living in Portland, OR.\nHis favorite emoticon: (づ￣ ³￣)づ'));
+        console.log(chalk.rgb(255, 0, 0)('Denzel B. is a software dev living in Vancouver, WA.\nHis favorite emoticon: ( ͡❛ ͜ʖ ͡❛)'));
+        console.log(chalk.rgb(0, 255, 0)('Ryan F. is a software dev living in Portland, OR.\nHis favorite emoticon: ≧◠‿◠≦✌\n'));
+        break;
       case '/emoticon':
         await handleEmoticon(promptOperation());
         break;
       case '/commands':
+        console.log(
+          chalk.rgb(192, 159, 209)('/about - See about the developers')
+        );
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
@@ -101,6 +154,16 @@ async function checkInput(text) {
         break;
       case '/signout':
         socket.disconnect();
+        break;
+      case '/encode':
+        await handleToBinary();
+        break;
+      case '/decode':
+        await handleToString();
+        break;
+      case '/piglatin':
+        await handleToPigLatin();
+        break;
     }
   } else {
     // send the user message to the socket server

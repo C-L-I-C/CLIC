@@ -2,35 +2,46 @@ const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
+
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+// const pool = require('./lib/utils/pool'); //needed for local deploy
 
 const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
+
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
-// const httpServer = createServer(app);
-// const io = new Server(httpServer, {
-//   /* options */
+
+
+// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS - FOR HEROKU DEPLOY
+const httpServer = createServer(app);
+const io = new Server(httpServer, { /* options */ });
+httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+
+// // ORIGINAL EXPRESS SERVER METHOD - NEEDED FOR LOCAL DEPLOY
+// const API_URL = process.env.API_URL || 'http://localhost';
+// app.listen(PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
+// });
+// process.on('exit', () => {
+//   console.log('👋  Goodbye!');
+//   pool.end();
 // });
 
-// httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-// ORIGINAL EXPRESS SERVER METHOD
-const API_URL = process.env.API_URL || 'http://localhost';
-app.listen(PORT, () => {
-  console.log(`🚀  Server started on ${API_URL}:${PORT}`);
-});
-process.on('exit', () => {
-  console.log('👋  Goodbye!');
-  pool.end();
-});
+// // SOCKET.IO SERVER ACCORDING TO TUTORIAL - NEEDED FOR LOCAL DEPLOY
+// // create socket.io server
+// // name a port for our server
 
-// SOCKET.IO SERVER ACCORDING TO TUTORIAL
-// create socket.io server
-const io = require('socket.io')();
-// name a port for our server
-const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+// const io = require('socket.io')();
+// const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
+
+// // Starting up a server on SOCKET_PORT - NEEDED FOR LOCAL DEPLOY
+// io.listen(SOCKET_PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+// });
+
 
 //user object to store names of user
 const users = {};
@@ -45,7 +56,7 @@ const chalkBackgroundColors = [
 
 const randomBackgroundColor =
   chalkBackgroundColors[
-    Math.floor(Math.random() * chalkBackgroundColors.length)
+  Math.floor(Math.random() * chalkBackgroundColors.length)
   ];
 
 const chalkTextColors = [
@@ -74,6 +85,7 @@ io.on('connection', (socket) => {
     await User.insert({
       username: name,
     });
+
     // now we want to emit an event to all users except that user, that the new user has joined the chat
     socket.broadcast.emit('client:message', `${name} joined the chat.`);
   });
@@ -150,6 +162,7 @@ io.on('connection', (socket) => {
   });
 });
 
+
 // listen for a disconnect event
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
@@ -163,7 +176,3 @@ io.on('connection', (socket) => {
   });
 });
 
-//Starting up a server on SOCKET_PORT
-io.listen(SOCKET_PORT, () => {
-  console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-});
