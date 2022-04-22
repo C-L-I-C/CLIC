@@ -1,8 +1,10 @@
 # C.L.I.C - Command Line Chatroom
 
-C.L.I.C. is a colorful, multi-functional terminal-based chatroom app that allows multiple users to message in real-time, create fun emoticons, fetch inspiring quotes and turn string-to-binary, using only back-end technologies.
+C.L.I.C. is a colorful, multi-functional terminal-based chatroom app that allows multiple users to message in real-time, see chat history, create fun emoticons, fetch inspiring quotes, fetch dad jokes, turn messages to binary and back, turn messages to pig-latin, all using back-end technologies and a terminal command line interface.
 
-https://npmjs.com/package/@............ //need to upudate this url once npm package is published.
+Link to client npm package:
+https://www.npmjs.com/package/@csjknapp/clic-client
+
 
 ### Libraries
 
@@ -12,8 +14,10 @@ Node.js | Socket.IO | Inquirer.js | Chalk | cFonts | Express | Supertest
 [Ryan](https://github.com/ryanflitcroft) | [Clayton](https://github.com/clayton-knapp) | [Denzel](https://github.com/xDenzelB) | [Alice](https://github.com/alicehsing)
 
 ### Instructions
-To use CLIC, install the following terminal command: npm i @csjknapp/clic-client -> npx @csjknapp/clic-client
-// may need to update when re-deployed on Heroku
+To use CLIC, install the package with following terminal command: 
+npm i @csjknapp/clic-client
+and then run the package with the following command:
+npx @csjknapp/clic-client
 
 Follow the command line instructions to start playing and chatting in your terminal!
 
@@ -28,6 +32,8 @@ Follow the command line instructions to start playing and chatting in your termi
 /decode - Translate your binary code to message.
 
 /quote - Fetch daily inspirational quote to sparkle ✨ your day!
+
+/dad - Fetch and display a random dad joke.
 
 /piglatin - Translate your message to Pig Latin 🐷 .
 

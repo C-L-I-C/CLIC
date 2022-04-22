@@ -6,7 +6,7 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
 const chalk = require('chalk');
-const { text } = require('express');
+// const { text } = require('express');
 // const pool = require('./lib/utils/pool'); //needed for local deploy
 
 const PORT = process.env.PORT || 7890;
@@ -52,9 +52,7 @@ const chalkBackgroundColors = [
 ];
 
 const randomBackgroundColor =
-  chalkBackgroundColors[
-  Math.floor(Math.random() * chalkBackgroundColors.length)
-  ];
+  chalkBackgroundColors[Math.floor(Math.random() * chalkBackgroundColors.length)];
 
 const chalkTextColors = [
   chalk.redBright,
@@ -116,7 +114,7 @@ io.on('connection', (socket) => {
     const quote = await getQuote();
     io.emit('client:message', `${users[socket.id]}: Quote for the day!: ${quote[0].q} -${quote[0].a}`);
   });
-  
+
   socket.on('getJoke', async () => {
     try {
       const joke = await getDadJoke();
@@ -124,7 +122,7 @@ io.on('connection', (socket) => {
       io.emit('client:message', `${users[socket.id]}: ${joke.body[0].setup}..... ${joke.body[0].punchline}`);
 
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   });
 
@@ -134,9 +132,7 @@ io.on('connection', (socket) => {
     const chatHistory = await Message.getHistory(Number(historyCount));
 
     chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${
-        entry.message
-      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      const chat = `${entry.username} said ${entry.message} at ${entry.createdAt.toLocaleTimeString('en-US')}`;
       socket.emit(
         'client:message',
         chalk.italic.rgb(224, 212, 153).bgWhite(chat)

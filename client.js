@@ -87,6 +87,8 @@ function promptHistory() {
         chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
       );
       socket.emit('getHistory', answer.history);
+    });
+}
 
 async function handleToBinary() {
   return inquirer
@@ -142,13 +144,14 @@ async function checkInput(text) {
         await handleEmoticon(promptOperation());
         break;
       case '/commands':
-        console.log(
-          chalk.rgb(192, 159, 209)('/about - See about the developers')
-        );
-        console.log(
-          chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
-        );
+        console.log(chalk.rgb(192, 159, 209)('/about - See about the developers'));
         console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
+        console.log(chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon Art'));
+        console.log(chalk.rgb(192, 159, 209)('/quote - Get a random quote'));
+        console.log(chalk.rgb(192, 159, 209)('/dad - Get a random dad joke'));
+        console.log(chalk.rgb(192, 159, 209)('/encode - Encode and send a message in binary'));
+        console.log(chalk.rgb(192, 159, 209)('/decode - Decode a binary coded message'));
+        console.log(chalk.rgb(192, 159, 209)('/piglatin - Translate and send your message in pig latin'));
         console.log(chalk.rgb(192, 159, 209)('/signout - Leave Chatroom'));
         break;
       case '/quote':
