@@ -10,8 +10,6 @@ const {
   stringToPigLatin,
 } = require('./lib/utils/command-functions');
 
-const randomBackgroundColor =
-  chalkBackgroundColors[Math.floor(Math.random() * chalkBackgroundColors.length)];
 
 const chalkBackgroundColors = [
   chalk.bgCyan,
@@ -19,6 +17,9 @@ const chalkBackgroundColors = [
   chalk.bgRed,
   chalk.bgYellow,
 ];
+
+const randomBackgroundColor =
+  chalkBackgroundColors[Math.floor(Math.random() * chalkBackgroundColors.length)];
 
 const chalkTextColors = [
   chalk.redBright,
@@ -29,6 +30,36 @@ const chalkTextColors = [
   chalk.magentaBright,
   chalk.cyanBright,
 ];
+
+CFonts.say('C.L.I.C', {
+  font: 'slick',
+  align: 'left',
+  colors: 'red',
+  background: 'transparent',
+  letterSpacing: 2,
+  lineHeight: 1,
+  space: true,
+  maxLength: '0',
+  gradient: 'red,blue',
+  independentGradient: false,
+  transitionGradient: false,
+  env: 'node',
+});
+
+CFonts.say('The No.1|CLI Chat App', {
+  font: 'chrome',
+  align: 'left',
+  colors: 'magenta',
+  background: 'transparent',
+  letterSpacing: 1,
+  lineHeight: 1,
+  space: true,
+  maxLength: '60',
+  gradient: false,
+  independentGradient: false,
+  transitionGradient: false,
+  env: 'node',
+});
 
 inquirer
   .prompt({
@@ -44,35 +75,10 @@ inquirer
   })
   .catch(console.error);
 
-socket.on('client:message', (text) => {
-  process.stdout.write('\r\x1b[K');
-  if (text.length) console.log(randomBackgroundColor(text));
-  process.stdout.write('> ');
-});
-
-socket.on('selectList', async ([names, list]) => {
-  const prompt = inquirer.prompt({
-    type: 'list',
-    message: 'Select Emoticon',
-    name: 'select',
-    choices: names,
-  });
-
-  await prompt
-    .then((answer) => {
-      const choice = list.find((entry) => {
-        return answer.select === entry.name;
-      });
-      socket.emit('emitEmoticon', choice.string);
-    })
-    .catch((error) => console.log(error));
-});
 
 function randomTextColor() {
   return chalkTextColors[Math.floor(Math.random() * chalkTextColors.length)];
 }
-
-
 
 async function messagePrompt() {
   return inquirer
@@ -233,34 +239,27 @@ async function checkInput(text) {
   }
 }
 
-CFonts.say('C.L.I.C', {
-  font: 'slick',
-  align: 'left',
-  colors: 'red',
-  background: 'transparent',
-  letterSpacing: 2,
-  lineHeight: 1,
-  space: true,
-  maxLength: '0',
-  gradient: 'red,blue',
-  independentGradient: false,
-  transitionGradient: false,
-  env: 'node',
+socket.on('client:message', (text) => {
+  process.stdout.write('\r\x1b[K');
+  if (text.length) console.log(randomBackgroundColor(text));
+  process.stdout.write('> ');
 });
 
-CFonts.say('The No.1|CLI Chat App', {
-  font: 'chrome',
-  align: 'left',
-  colors: 'magenta',
-  background: 'transparent',
-  letterSpacing: 1,
-  lineHeight: 1,
-  space: true,
-  maxLength: '60',
-  gradient: false,
-  independentGradient: false,
-  transitionGradient: false,
-  env: 'node',
-});
+socket.on('selectList', async ([names, list]) => {
+  const prompt = inquirer.prompt({
+    type: 'list',
+    message: 'Select Emoticon',
+    name: 'select',
+    choices: names,
+  });
 
+  await prompt
+    .then((answer) => {
+      const choice = list.find((entry) => {
+        return answer.select === entry.name;
+      });
+      socket.emit('emitEmoticon', choice.string);
+    })
+    .catch((error) => console.log(error));
+});
 

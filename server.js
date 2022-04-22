@@ -1,17 +1,18 @@
+const app = require('./lib/app');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
-const { Server } = require('socket.io');
-const io = new Server(httpServer, { /* options */ });
 const { createServer } = require('http');
+const { Server } = require('socket.io');
 const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
 
-const app = require('./lib/app');
-const httpServer = createServer(app);
 const PORT = process.env.PORT || 7890;
 
-const users = {};
+const httpServer = createServer(app);
+const io = new Server(httpServer, { /* options */ });
 httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const users = {};
 
 io.on('connection', (socket) => {
   console.log('New Connection: ' + socket.id);
