@@ -12,6 +12,7 @@ const chalk = require('chalk');
 
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
+
 // HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS - FOR HEROKU DEPLOY
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
@@ -85,21 +86,8 @@ io.on('connection', (socket) => {
       username: name,
     });
 
-    const chatHistory = await Message.getHistory();
-
-    chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${entry.message
-        } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
-      socket.emit(
-        'client:message',
-        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
-      );
-    });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit(
-      'client:message',
-      randomTextColor`${name} joined the chat.`
-    );
+    socket.broadcast.emit('client:message', `${name} joined the chat.`);
   });
 
   // Listen for a message event
@@ -124,6 +112,22 @@ io.on('connection', (socket) => {
     });
     // emit an event to all users except that user
     io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
+  });
+
+  //listen for /history command
+  socket.on('getHistory', async (historyCount) => {
+    //fetch chat history from our DB
+    const chatHistory = await Message.getHistory(Number(historyCount));
+
+    chatHistory.map((entry) => {
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
+    });
   });
 
   //listen for /getList command
@@ -155,6 +159,20 @@ io.on('connection', (socket) => {
     } else {
       socket.emit('client:message', chalk.bold.red('Invalid Emoticon ):'));
     }
+  });
+});
+
+
+// listen for a disconnect event
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    //store users name
+    users[socket.id];
+    // now we want to emit an event to all users except that user, that an user has left the chat
+    socket.broadcast.emit(
+      'client:message',
+      `${users[socket.id]} has left the chat.`
+    );
   });
 });
 

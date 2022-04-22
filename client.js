@@ -2,9 +2,9 @@
 const io = require('socket.io-client');
 // pass url of our server
 // const socket = io('http://cli-c.herokuapp.com/socket.io/?EIO=4&transport=websocket');
-// const socket = io('http://localhost:3000');
 const socket = io('https://cli-c.herokuapp.com/');
 // const socket = io('http://localhost:3000'); //for local deploy
+
 //import inquirer
 const inquirer = require('inquirer');
 // import chalk to work with terminal styling
@@ -71,6 +71,21 @@ function promptOperation() {
   });
 }
 
+
+function promptHistory() {
+  return inquirer
+    .prompt({
+      type: 'list',
+      message: 'How many recent chat messages would you like to peek at?',
+      name: 'history',
+      choices: ['5', '10', '15', '20'],
+    })
+    .then((answer) => {
+      console.log(
+        chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
+      );
+      socket.emit('getHistory', answer.history);
+
 async function handleToBinary() {
   return inquirer
     .prompt({
@@ -107,6 +122,7 @@ async function handleToPigLatin() {
     .then((answer) => {
       const message = stringToPigLatin(answer.input);
       socket.emit('server:message', message);
+
     });
 }
 
@@ -130,6 +146,14 @@ async function checkInput(text) {
         console.log(
           chalk.rgb(192, 159, 209)('/emoticon - Print or Create Emoticon ART')
         );
+        console.log(chalk.rgb(192, 159, 209)('/history - View Chat History'));
+        console.log(chalk.rgb(192, 159, 209)('/signout - Leave Chatroom'));
+        break;
+      case '/history':
+        await promptHistory();
+        break;
+      case '/signout':
+        socket.disconnect();
         break;
       case '/encode':
         await handleToBinary();
@@ -190,10 +214,9 @@ inquirer
     console.log(chalk.bold.magentaBright('You joined the chat'));
     console.log(
       chalk.rgb(255, 136, 0).bold('Type /commands for a list of commands')
-    ); // TODO: LIST AVAIL COMMANDS SELECT-LINE
-    console.log(
-      chalk.bold.rgb(224, 212, 153)('Here is a list of the Chat History: ')
     );
+    // TODO: LIST AVAIL COMMANDS SELECT-LINE
+
     //prompt user to type a message
     messagePrompt();
   })
