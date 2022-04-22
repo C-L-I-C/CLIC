@@ -13,8 +13,6 @@ describe('Admin routes', () => {
     pool.end();
   });
 
-  // Message
-
   it('should be able to get a list of each Message from messages for authenticated admins', async () => {
     const agent = request.agent(app);
     const expected = [

@@ -13,7 +13,6 @@ describe('Admin routes', () => {
     pool.end();
   });
 
-  // Emoticon
   it('should be able to get a list of each Emoticon from emoticons for authenticated admins', async () => {
     const agent = request.agent(app);
 

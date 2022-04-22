@@ -14,8 +14,6 @@ describe('Admin routes', () => {
     pool.end();
   });
 
-  // Admin
-
   it('should insert an instance of Admin into admins with email and password', async () => {
     const res = await request(app).post('/api/v1/admin').send({
       email: 'user@admin.com',

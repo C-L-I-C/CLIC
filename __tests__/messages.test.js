@@ -68,6 +68,13 @@ describe('CLIC routes', () => {
 
     const expected = [
       {
+        message: 'You rock!',
+        userId: '1',
+        id: expect.any(String),
+        createdAt: expect.any(Date),
+        username: 'user 1',
+      },
+      {
         message: 'HELLO WORLD!',
         userId: '1',
         id: expect.any(String),
@@ -81,16 +88,9 @@ describe('CLIC routes', () => {
         createdAt: expect.any(Date),
         username: 'user 2',
       },
-      {
-        message: 'You rock!',
-        userId: '1',
-        id: expect.any(String),
-        createdAt: expect.any(Date),
-        username: 'user 1',
-      },
     ];
 
-    const res = await Message.getHistory();
+    const res = await Message.getHistory(3);
 
     expect(res).toEqual(expected);
   });

@@ -4,8 +4,6 @@ const request = require('supertest');
 const app = require('../lib/app');
 const AdminService = require('../lib/services/AdminService');
 
-const User = require('../lib/models/User');
-
 describe('CLIC routes', () => {
   beforeEach(() => {
     return setup(pool);
