@@ -1,23 +1,24 @@
 const app = require('./lib/app');
-// const pool = require('./lib/utils/pool');
 const Emoticon = require('./lib/models/Emoticon');
 const Message = require('./lib/models/Message');
 const User = require('./lib/models/User');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { getDadJoke, getQuote } = require('./lib/utils/QuoteUtils');
-const PORT = process.env.PORT || 7890;
 const chalk = require('chalk');
 const { text } = require('express');
-const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
-// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS
+// const pool = require('./lib/utils/pool'); //needed for local deploy
+
+const PORT = process.env.PORT || 7890;
+
+
+// HTTP / EXPRESS SERVER ACCORDING TO SOCKET IO DOCS - FOR HEROKU DEPLOY
 const httpServer = createServer(app);
 const io = new Server(httpServer, { /* options */ });
-
 httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 
-// ORIGINAL EXPRESS SERVER METHOD
+// // ORIGINAL EXPRESS SERVER METHOD - NEEDED FOR LOCAL DEPLOY
 // const API_URL = process.env.API_URL || 'http://localhost';
 // app.listen(PORT, () => {
 //   console.log(`🚀  Server started on ${API_URL}:${PORT}`);
@@ -27,13 +28,16 @@ httpServer.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //   pool.end();
 // });
 
-
-// SOCKET.IO SERVER ACCORDING TO TUTORIAL
-//create socket.io server
+// // SOCKET.IO SERVER ACCORDING TO TUTORIAL - NEEDED FOR LOCAL DEPLOY
+// // create socket.io server
+// // name a port for our server
 // const io = require('socket.io')();
-// name a port for our server
 // const SOCKET_PORT = process.env.SOCKET_PORT || 3000;
 
+// // Starting up a server on SOCKET_PORT - NEEDED FOR LOCAL DEPLOY
+// io.listen(SOCKET_PORT, () => {
+//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
+// });
 
 
 //user object to store names of user
@@ -79,21 +83,8 @@ io.on('connection', (socket) => {
       username: name,
     });
 
-    const chatHistory = await Message.getHistory();
-
-    chatHistory.map((entry) => {
-      const chat = `${entry.username} said ${entry.message
-        } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
-      socket.emit(
-        'client:message',
-        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
-      );
-    });
     // now we want to emit an event to all users except that user, that the new user has joined the chat
-    socket.broadcast.emit(
-      'client:message',
-      randomTextColor`${name} joined the chat.`
-    );
+    socket.broadcast.emit('client:message', `${name} joined the chat.`);
   });
 
   // Listen for a message event
@@ -120,23 +111,38 @@ io.on('connection', (socket) => {
     io.emit('client:message', randomTextColor`${users[socket.id]}: ${text}`);
   });
 
+
   socket.on('getQuote', async () => {
     const quote = await getQuote();
     io.emit('client:message', `${users[socket.id]}: Quote for the day!: ${quote[0].q} -${quote[0].a}`);
   });
+  
   socket.on('getJoke', async () => {
     try {
       const joke = await getDadJoke();
 
-      io.emit('client:message', `${users[socket.id]}: ${joke.body[0].setup}.....${joke.body[0].punchline}`);
+      io.emit('client:message', `${users[socket.id]}: ${joke.body[0].setup}..... ${joke.body[0].punchline}`);
 
     } catch (error) {
       console.error(error)
     }
   });
 
+  //listen for /history command
+  socket.on('getHistory', async (historyCount) => {
+    //fetch chat history from our DB
+    const chatHistory = await Message.getHistory(Number(historyCount));
 
-
+    chatHistory.map((entry) => {
+      const chat = `${entry.username} said ${
+        entry.message
+      } at ${entry.createdAt.toLocaleTimeString('en-US')}`;
+      socket.emit(
+        'client:message',
+        chalk.italic.rgb(224, 212, 153).bgWhite(chat)
+      );
+    });
+  });
 
   //listen for /getList command
   socket.on('getList', async (command) => {
@@ -172,7 +178,16 @@ io.on('connection', (socket) => {
 });
 
 
-// Starting up a server on SOCKET_PORT
-// io.listen(SOCKET_PORT, () => {
-//   console.log(`🚀  Server started on ${API_URL}:${SOCKET_PORT}`);
-// });
+// listen for a disconnect event
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    //store users name
+    users[socket.id];
+    // now we want to emit an event to all users except that user, that an user has left the chat
+    socket.broadcast.emit(
+      'client:message',
+      `${users[socket.id]} has left the chat.`
+    );
+  });
+});
+
